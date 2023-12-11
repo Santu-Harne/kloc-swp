@@ -26,7 +26,7 @@ app.use(cors(
 const mainRoute = require('./route/mainRoute')
 
 //primary routes
-app.use('/api/client', mainRoute.clientRoute)
+app.use('/api/user', mainRoute.userRoute)
 app.use('/api', mainRoute.authRoute)
 
 const start = async () => {

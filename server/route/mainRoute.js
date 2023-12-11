@@ -1,8 +1,8 @@
-const clientRoute = require('./clientRoutes')
+const userRoute = require('./userRoutes')
 const authRoute = require('./authRoute')
 
 const mainRoute = {
-  clientRoute,
+  userRoute,
   authRoute
 }
 

@@ -23,10 +23,11 @@ app.use(cors(
 ))
 
 // route imports
-const clientRoute = require('./route/clientRoutes')
+const mainRoute = require('./route/mainRoute')
 
 //primary routes
-app.use('/api/client', clientRoute)
+app.use('/api/client', mainRoute.clientRoute)
+app.use('/api', mainRoute.authRoute)
 
 const start = async () => {
   try {

@@ -9,10 +9,10 @@ const connection = mysql.createConnection({
   database: process.env.DB_NAME,
 });
 
-// connect function
+//connect function
 connection.connect(function (err) {
   if (err) assert.deepStrictEqual(err, null);
   console.log(`Connected to ${process.env.DB_NAME} database`);
 });
-
+//hi
 module.exports = connection;

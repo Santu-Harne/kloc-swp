@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import toast from 'react-hot-toast'
-import { login, getAllClients, createClient } from './../actions/clientActions'
+import { login, getAllClients, createClient } from '../actions/userActions'
 
 const clientReducer = createSlice({
   name: 'client',

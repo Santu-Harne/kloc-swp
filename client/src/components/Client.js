@@ -1,7 +1,7 @@
 import React, { useEffect, useSate } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
-import { getAllUsers, createUser } from './../actions/clientActions'
+import { getAllUsers, createUser } from '../actions/userActions'
 
 const data = {
   clientName: "Nagendra",

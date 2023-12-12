@@ -10,7 +10,7 @@ import {
    MDBSpinner,
  } from "mdb-react-ui-kit";
  import { Link, useNavigate } from "react-router-dom";
- import {createClient } from './../actions/clientActions'
+ import {createUser } from './../actions/userActions'
 import { useDispatch } from "react-redux";
 import toast from 'react-hot-toast'
 
@@ -41,7 +41,7 @@ const [isUserEmailValid, setIsUserEmailValid] = useState(true);
     const handleSubmit = async(e) => {
       e.preventDefault();
       setSubmitBtn(true)
-    await dispatch(createClient(formValue))
+    await dispatch(createUser(formValue))
       .then(res => {
         if (res.payload) {
           // console.log(res.payload);

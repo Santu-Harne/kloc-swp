@@ -9,32 +9,42 @@ export const login = createAsyncThunk(
   async (userCred) => {
     try {
       const result = await api.post('/api/login', userCred)
-      return result?.data
+      return result.data
     } catch (error) {
       errorHandler(error)
     }
   })
 
-export const getAllClients = createAsyncThunk(
-  '/api/client/get_all',
+export const getAllUsers = createAsyncThunk(
+  '/api/user/get_all',
   async () => {
     try {
       const result = await api.get('/api/user/get_all')
-      return result?.data?.data
+      return result.data.data
     } catch (error) {
       errorHandler(error)
     }
   }
 )
 
-export const createClient = createAsyncThunk(
-  '/api/client/create_client',
-  async (clientData) => {
+export const createUser = createAsyncThunk(
+  '/api/user/create_user',
+  async (userData) => {
     try {
-      const result = await api.post('/api/user/create_user', clientData)
-      
-      return result?.data
-    
+      const result = await api.post('/api/user/create_user', userData)
+      return result.data
+    } catch (error) {
+      errorHandler(error)
+    }
+  }
+)
+
+export const updateUser = createAsyncThunk(
+  '/api/user/update_user',
+  async (userData, userId) => {
+    try {
+      const result = await api.put(`/api/user/update_user/${userId}`, userData)
+      return result.data
     } catch (error) {
       errorHandler(error)
     }

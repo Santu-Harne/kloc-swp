@@ -49,18 +49,25 @@ const userController = {
     try {
       const reqBody = req.body
       const userId = req.params.userId
-      db.query('SELECT * FROM user_table WHERE userEmail = ?', reqBody.userEmail, async (err, response) => {
-        if (err) assert.deepStrictEqual(err, null);
-        else if (response.length > 0 && userId !== response[0].userId) {
-          return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'User already exists with this email!' })
-        }
+      db.query('SELECT * FROM user_table WHERE userId = ?', userId, (err, user) => {
+        if (err) throw err;
+        else if (!user.length)
+          return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'No user present with provided userId!' })
         else {
-          const query = 'UPDATE user_table  SET ? WHERE userId = ?';
-          db.query(query, [reqBody, userId], (err, response) => {
+          db.query('SELECT * FROM user_table WHERE userEmail = ?', reqBody.userEmail, async (err, response) => {
             if (err) assert.deepStrictEqual(err, null);
-            else (db.query('SELECT * FROM user_table WHERE userId = ?', userId, (err, data) => {
-              return res.status(StatusCodes.OK).json({ msg: 'User data updated successfully', data: data[0] })
-            }))
+            else if (response.length > 0 && userId !== response[0].userId) {
+              return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'User already exists with this email!' })
+            }
+            else {
+              const query = 'UPDATE user_table  SET ? WHERE userId = ?';
+              db.query(query, [reqBody, userId], (err, response) => {
+                if (err) assert.deepStrictEqual(err, null);
+                else (db.query('SELECT * FROM user_table WHERE userId = ?', userId, (err, data) => {
+                  return res.status(StatusCodes.OK).json({ msg: 'User data updated successfully', data: data[0] })
+                }))
+              })
+            }
           })
         }
       })

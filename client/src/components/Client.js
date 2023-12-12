@@ -1,7 +1,7 @@
 import React, { useEffect, useSate } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
-import { getAllClients, createClient } from './../actions/clientActions'
+import { getAllUsers, createUser } from './../actions/clientActions'
 
 const data = {
   clientName: "Nagendra",
@@ -18,7 +18,7 @@ const Client = () => {
   const { clients } = useSelector(state => state.clientsData)
 
   const addClient = async () => {
-    dispatch(createClient(data))
+    dispatch(createUser(data))
       .then(res => {
         // console.log(res.payload);
         if (res.payload) {
@@ -28,7 +28,7 @@ const Client = () => {
   }
 
   useEffect(() => {
-    dispatch(getAllClients())
+    dispatch(getAllUsers())
   }, [])
   return (
     <div>

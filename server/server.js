@@ -5,7 +5,7 @@ const { StatusCodes } = require('http-status-codes')
 const path = require('path')
 
 //port
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 7000
 
 // ref
 const app = express()

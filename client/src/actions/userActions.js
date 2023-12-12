@@ -41,9 +41,21 @@ export const createUser = createAsyncThunk(
 
 export const updateUser = createAsyncThunk(
   '/api/user/update_user',
-  async (userData, userId) => {
+  async (data) => {
     try {
-      const result = await api.put(`/api/user/update_user/${userId}`, userData)
+      const result = await api.put(`/api/user/update_user/${data.userId}`, data.updateData)
+      return result.data
+    } catch (error) {
+      errorHandler(error)
+    }
+  }
+)
+
+export const deleteUser = createAsyncThunk(
+  '/api/user/delete_user',
+  async (userId) => {
+    try {
+      const result = await api.delete(`/api/user/delete_user/${userId}`)
       return result.data
     } catch (error) {
       errorHandler(error)

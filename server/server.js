@@ -5,7 +5,7 @@ const { StatusCodes } = require('http-status-codes')
 const path = require('path')
 
 //port
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 7000
 
 // ref
 const app = express()
@@ -28,6 +28,12 @@ const mainRoute = require('./route/mainRoute')
 //primary routes
 app.use('/api/user', mainRoute.userRoute)
 app.use('/api', mainRoute.authRoute)
+app.use('/api',mainRoute.questionRoute)
+app.use('/api',mainRoute.clientresposeRoute)
+// default route
+app.all('*', (req, res) => {
+  res.status(StatusCodes.NOT_FOUND).json({ msg: "The request route path not found" })
+})
 app.use('/api/client',mainRoute.competencyAnalysisRoute)
 app.use('/api',mainRoute.coreCompetencyController)
 

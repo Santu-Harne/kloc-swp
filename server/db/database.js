@@ -1,6 +1,6 @@
 const assert = require('assert');
-// const mysql = require('mysql');
-const mysql = require('mysql2');
+const bcrypt = require("bcryptjs")
+const mysql = require('mysql');
 
 //  Create a connection
 const connection = mysql.createPool({
@@ -27,8 +27,10 @@ connection.getConnection(async (err, connection) => {
       throw err;
     }
   } else {
-    console.log(`Connected to ${process.env.DB_NAME} database`);
-    // You can perform other operations here if needed
+    console.log(`connected to ${process.env.DB_NAME} database`);
+
+    // Create all tables
+    await createAllTables()
   }
 });
 
@@ -82,22 +84,27 @@ const createAllTables = async () => {
   //6 Create coreCompetencyName_table in the new database
   await coreCompetencyNameTableCreation()
 
-  //6 Create coreCompetencies_table in the new database
+  //7 Create coreCompetencies_table in the new database
   await coreCompetenciesTableCreation()
+
+  //Create admin data
+  createAdminData()
 }
 const sectionTableCreation = () => {
   return new Promise((resolve, reject) => {
-    const sectionTableCreateQuery = `CREATE TABLE section_table (
+    const sectionTableCreateQuery = `CREATE TABLE IF NOT EXISTS section_table (
       sectionID varchar(50) PRIMARY KEY NOT NULL,
       sectionName varchar(50) DEFAULT NULL
       )`
-    connection.query(sectionTableCreateQuery, (err) => {
+    connection.query(sectionTableCreateQuery, (err, result) => {
       if (err) {
         console.error('Error creating section_table:', err);
         reject(err);
       }
       else {
-        console.log('Created section_table');
+        if (result.warningCount === 0) {
+          console.log('section_table created');
+        }
         resolve();
       }
     })
@@ -106,7 +113,7 @@ const sectionTableCreation = () => {
 }
 const userTableCreation = () => {
   return new Promise((resolve, reject) => {
-    const userTableCreateQuery = `CREATE TABLE user_table(
+    const userTableCreateQuery = `CREATE TABLE IF NOT EXISTS user_table(
       userId VARCHAR(50) UNIQUE PRIMARY KEY,
       userName VARCHAR(50) NOT NULL,
       userEmail VARCHAR(50) NOT NULL,
@@ -123,13 +130,15 @@ const userTableCreation = () => {
       userSocialMediaUrl VARCHAR(100),
       userFinalCommit BOOLEAN NOT NULL
   )`
-    connection.query(userTableCreateQuery, (err) => {
+    connection.query(userTableCreateQuery, (err, result) => {
       if (err) {
         console.error('Error creating user_table:', err);
         reject(err);
       }
       else {
-        console.log('Created user_table');
+        if (result.warningCount === 0) {
+          console.log('user_table created');
+        }
         resolve();
       }
     })
@@ -137,7 +146,7 @@ const userTableCreation = () => {
 }
 const questionTableCreation = () => {
   return new Promise((resolve, reject) => {
-    const questionTableCreateQuery = `CREATE TABLE question_table (
+    const questionTableCreateQuery = `CREATE TABLE IF NOT EXISTS question_table (
       questionID varchar(50) PRIMARY KEY NOT NULL,
       sectionID varchar(50) NOT NULL,
       questionText text,
@@ -145,13 +154,15 @@ const questionTableCreation = () => {
       exampleInput text,
       FOREIGN KEY (sectionId) REFERENCES section_table(sectionId)
       )`
-    connection.query(questionTableCreateQuery, (err) => {
+    connection.query(questionTableCreateQuery, (err, result) => {
       if (err) {
         console.error('Error creating question_table:', err);
         reject(err);
       }
       else {
-        console.log('Created question_table');
+        if (result.warningCount === 0) {
+          console.log('question_table created');
+        }
         resolve();
       }
     })
@@ -160,7 +171,7 @@ const questionTableCreation = () => {
 }
 const clientResponseTableCreation = () => {
   return new Promise((resolve, reject) => {
-    const clientResponseTableCreateQuery = `CREATE TABLE clientResponse_table (
+    const clientResponseTableCreateQuery = `CREATE TABLE IF NOT EXISTS clientResponse_table (
           clientResponseId VARCHAR(50) PRIMARY KEY NOT NULL,
           questionId VARCHAR(50) NOT NULL,
           userId VARCHAR(50) NOT NULL,
@@ -170,13 +181,15 @@ const clientResponseTableCreation = () => {
           FOREIGN KEY (questionId) REFERENCES question_table(questionId),
           FOREIGN KEY (userId) REFERENCES user_table(userId)
           )`
-    connection.query(clientResponseTableCreateQuery, (err) => {
+    connection.query(clientResponseTableCreateQuery, (err, result) => {
       if (err) {
         console.error('Error creating clientResponse_table:', err);
         reject(err);
       }
       else {
-        console.log('Created clientResponse_table');
+        if (result.warningCount === 0) {
+          console.log('clientResponse_table created');
+        }
         resolve();
       }
     })
@@ -184,7 +197,7 @@ const clientResponseTableCreation = () => {
 }
 const competitionAnalysisTableCreation = () => {
   return new Promise((resolve, reject) => {
-    const competitionAnalysisTableCreateQuery = `CREATE TABLE competitionAnalysis_table (
+    const competitionAnalysisTableCreateQuery = `CREATE TABLE IF NOT EXISTS competitionAnalysis_table (
       competitionName TEXT,
       competitionAnalysisId VARCHAR(50) PRIMARY KEY NOT NULL,
       companyProfile TEXT,
@@ -200,13 +213,15 @@ const competitionAnalysisTableCreation = () => {
       userId VARCHAR(50) NOT NULL,
       FOREIGN KEY ( userId) REFERENCES user_table ( userId)
       )`
-    connection.query(competitionAnalysisTableCreateQuery, (err) => {
+    connection.query(competitionAnalysisTableCreateQuery, (err, result) => {
       if (err) {
         console.error('Error creating competitionAnalysis_table:', err);
         reject(err);
       }
       else {
-        console.log('Created competitionAnalysis_table');
+        if (result.warningCount === 0) {
+          console.log('competitionAnalysis_table created');
+        }
         resolve();
       }
     })
@@ -214,18 +229,20 @@ const competitionAnalysisTableCreation = () => {
 }
 const coreCompetencyNameTableCreation = () => {
   return new Promise((resolve, reject) => {
-    const coreCompetencyNameTableCreateQuery = `CREATE TABLE coreCompetencyName_table (
+    const coreCompetencyNameTableCreateQuery = `CREATE TABLE IF NOT EXISTS coreCompetencyName_table (
       coreCompetencyId  VARCHAR(50) PRIMARY KEY NOT NULL,
       competencyName TEXT,
       competencyDescription TEXT
       )`
-    connection.query(coreCompetencyNameTableCreateQuery, (err) => {
+    connection.query(coreCompetencyNameTableCreateQuery, (err, result) => {
       if (err) {
         console.error('Error creating coreCompetencyName_table:', err);
         reject(err);
       }
       else {
-        console.log('Created coreCompetencyName_table');
+        if (result.warningCount === 0) {
+          console.log('coreCompetencyName_table created');
+        }
         resolve();
       }
     })
@@ -233,7 +250,7 @@ const coreCompetencyNameTableCreation = () => {
 }
 const coreCompetenciesTableCreation = () => {
   return new Promise((resolve, reject) => {
-    const coreCompetenciesTableCreateQuery = `CREATE TABLE coreCompetencies_table (
+    const coreCompetenciesTableCreateQuery = `CREATE TABLE IF NOT EXISTS coreCompetencies_table (
       competencyId  VARCHAR(50) PRIMARY KEY NOT NULL,
       userId VARCHAR(50) NOT NULL,
       coreCompetencyId  VARCHAR(50)  NOT NULL,
@@ -244,16 +261,53 @@ const coreCompetenciesTableCreation = () => {
       FOREIGN KEY (coreCompetencyId) REFERENCES coreCompetencyName_table(coreCompetencyId),
       FOREIGN KEY (userId) REFERENCES user_table(userId)
       )`
-    connection.query(coreCompetenciesTableCreateQuery, (err) => {
+    connection.query(coreCompetenciesTableCreateQuery, (err, result) => {
       if (err) {
         console.error('Error creating coreCompetencies_table:', err);
         reject(err);
       }
       else {
-        console.log('Created coreCompetencies_table');
+        if (result.warningCount === 0) {
+          console.log('coreCompetencies_table created');
+        }
         resolve();
       }
     })
+  })
+}
+const createAdminData = () => {
+  connection.query(`SELECT * FROM user_table`, async (err, response) => {
+    if (err) {
+      throw err;
+    }
+    else if (response.length === 0) {
+      const userData = {
+        userId: 'user_0001',
+        userName: "Santosh",
+        userEmail: "santosh.283143@gmail.com",
+        userPassword: await bcrypt.hash('Santosh1437$', 10),
+        userRole: 'admin',
+        userMobileNo: "8660822483",
+        userAltMobileNo: "",
+        userCompany: "klocTechnologies",
+        userCountry: "India",
+        userAddress: "Bangalore",
+        userDesignation: "Developer",
+        userDepartment: "Frontend",
+        userWebsiteUrl: "www.google.com",
+        userSocialMediaUrl: "www.facebook.com",
+        userFinalCommit: false
+      }
+      connection.query('INSERT INTO user_table SET ?', userData, (err, response) => {
+        if (err) {
+          // Handle error during database creation
+          console.error('Error creating adminData:', err);
+        }
+        else {
+          console.log('admin data created successfully!');
+        }
+      })
+    }
   })
 }
 

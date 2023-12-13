@@ -34,7 +34,8 @@ const mainRoute = require('./route/mainRoute')
 app.use('/api/user', mainRoute.userRoute)
 app.use('/api/section', mainRoute.sectionRoute)
 app.use('/api', mainRoute.authRoute)
-
+app.use('/api',mainRoute.questionRoute)
+app.use('/api',mainRoute.clientresposeRoute)
 // default route
 app.all('*', (req, res) => {
   res.status(StatusCodes.NOT_FOUND).json({ msg: "The request route path not found" })

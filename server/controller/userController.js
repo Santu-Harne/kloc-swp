@@ -17,7 +17,6 @@ const userController = {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message })
     }
   },
-
   createUser: async (req, res) => {
     try {
       const reqBody = req.body

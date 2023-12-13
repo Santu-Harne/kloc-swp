@@ -40,6 +40,8 @@ app.use('/api',mainRoute.clientresposeRoute)
 app.all('*', (req, res) => {
   res.status(StatusCodes.NOT_FOUND).json({ msg: "The request route path not found" })
 })
+app.use('/api/client',mainRoute.competencyAnalysisRoute)
+app.use('/api',mainRoute.coreCompetencyController)
 
 const start = async () => {
   try {

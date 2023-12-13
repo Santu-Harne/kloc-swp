@@ -17,48 +17,42 @@ const questionController = {
    },
    createQuestions: async (req, res) => {
     try {
+      const sectionId=req.params.sectionId
       const reqBody = req.body;
-  
-      // Check if the question with the given text already exists
-      db.query('SELECT * FROM question_table WHERE questionText = ?', [reqBody.questionText], async (err, response) => {
-        if (err) {
-          throw new Error(err.message);
-        } else if (response.length > 0) {
-          return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Question already exists with this text!' });
-        } else {
-          // Assuming you have a function to generate a unique question ID
-          const newQuestionId = await idGenerator('question', 'question_table');
-  
-          // Ensure that the provided sectionID is a valid foreign key
-          db.query('SELECT * FROM section_table WHERE sectionID = ?', [reqBody.sectionID], (err, sectionResponse) => {
-            if (err) {
-              throw new Error(err.message);
-            } else if (sectionResponse.length === 0) {
-              return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Invalid sectionID. Section not found.' });
-            } else {
-              // Construct the question data
-              const questionData = {
-                questionID: newQuestionId,
-                sectionID: reqBody.sectionID,
-                questionText: reqBody.questionText,
-                questionInputType: reqBody.questionInputType,
-                exampleInput: reqBody.exampleInput,
-              };
-  
-              // Insert the new question into the 'question_table' using parameterized query
-              const query = 'INSERT INTO question_table SET ?';
-              db.query(query, [questionData], (err, response) => {
-                if (err) {
-                  throw new Error(err.message);
-                }
-                return res.status(StatusCodes.OK).json({ msg: 'Question created successfully', data: questionData });
-              });
-            }
-          });
+      const newQuestionId = await idGenerator('question', 'question_table');
+      db.query(`SELECT sectionId FROM section_table WHERE sectionId=?`,sectionId,async(sectionErr,sectionResp)=>{
+        if (sectionErr) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+            return;
         }
-      }); 
+        if (sectionResp.length === 0) {
+            res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Section Not Found' });
+            return;
+        }
+      // Check if the question with the given text already exists
+        db.query('SELECT * FROM question_table WHERE questionText = ?', [reqBody.questionText], async (quesErr, quesRes) => {
+          if (quesErr) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+            return;
+          }
+          if (response.length > 0) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Question already exists with this text!' });
+          }
+              // Construct the question data
+          const questionData = {...req.body,sectionId:sectionId,questionId:newQuestionId};
+          // Insert the new question into the 'question_table' using parameterized query
+          const query = 'INSERT INTO question_table SET ?';
+          db.query(query, questionData, (finalErr, finalRes) => {
+            if (finalErr) {
+              res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+              return;
+            }
+            return res.status(StatusCodes.OK).json({ msg: 'Question Created Successfully', data: questionData });
+          });
+        }); 
+      })
     } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
     }
   },
    updateQuestion : async (req, res) => {

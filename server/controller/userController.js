@@ -30,12 +30,9 @@ const userController = {
           const newId = await idGenerator('user', 'user_table')
           const encPass = await bcrypt.hash(reqBody.userPassword, 10)
           const role = `${req.body.userEmail.endsWith('kloctechnologies.com') ? 'admin' : 'client'}`
-<<<<<<< HEAD
-          console.log(encPass)
-=======
 
->>>>>>> d0771f94f4c0c717dfca9a744230f2d7de6b4c7d
           const userData = { ...reqBody, userId: newId, userPassword: encPass, userRole: role, userFinalCommit: false }
+
           const query = 'INSERT INTO user_table SET ?';
 
           db.query(query, userData, (err, response) => {
@@ -79,9 +76,6 @@ const userController = {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message })
     }
   },
-<<<<<<< HEAD
- 
-=======
 
   deleteUser: async (req, res) => {
     try {
@@ -102,6 +96,5 @@ const userController = {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message })
     }
   }
->>>>>>> d0771f94f4c0c717dfca9a744230f2d7de6b4c7d
 }
 module.exports = userController

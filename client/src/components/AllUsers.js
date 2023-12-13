@@ -10,6 +10,7 @@ console.log(users)
   useEffect(() => {
     dispatch(getAllUsers())
   }, [])
+  console.log(users)
   return (
     <div>
       <h1>Users Data</h1>

@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 
 
 //port
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 7000
 
 // ref
 const app = express()
@@ -34,6 +34,11 @@ const mainRoute = require('./route/mainRoute')
 app.use('/api/user', mainRoute.userRoute)
 app.use('/api/section', mainRoute.sectionRoute)
 app.use('/api', mainRoute.authRoute)
+
+// default route
+app.all('*', (req, res) => {
+  res.status(StatusCodes.NOT_FOUND).json({ msg: "The request route path not found" })
+})
 
 const start = async () => {
   try {

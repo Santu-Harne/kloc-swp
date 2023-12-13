@@ -8,9 +8,9 @@ const router = express.Router();
 router.post('/create', sectionController.createSection);
 
 // Read all sections
-router.get('/getAllSections', sectionController.getAllSections);
+router.get('/getAll', sectionController.getAllSections);
 
-router.get('/getAllSectionsBySectionId/:sectionID', sectionController.getSectionById)
+router.get('/get/:sectionID', sectionController.getSectionById)
 
 // Update a section by ID
 router.put('/update/:sectionID', sectionController.updateSection);

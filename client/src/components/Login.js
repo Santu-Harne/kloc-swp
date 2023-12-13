@@ -23,15 +23,16 @@ const Login = () => {
   const [SubmitBtn, setSubmitBtn] = useState(false)
   const{email,password}  = formValue
   const dispatch = useDispatch();
-
+  const navigate = useNavigate()
   const submitHandler = async (e) => {
     // e.preventDefault()
     setSubmitBtn(true)
-    await dispatch(login(user))
+    await dispatch(login(formValue))
       .then(res => {
         if (res.payload) {
           // console.log(res.payload);
           toast.success(res.payload.msg)
+          navigate('/all_users')
           localStorage.setItem('authToken', res.payload.authToken)
         }
       })

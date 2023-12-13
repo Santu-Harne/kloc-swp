@@ -13,7 +13,6 @@ const userController = {
       res.status(StatusCodes.OK).json({ msg: 'All users data', data: response })
     })
   },
-
   createUser: async (req, res) => {
     const reqBody = req.body
     const newId = await idGenerator('user', 'user_table')

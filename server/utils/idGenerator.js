@@ -16,6 +16,7 @@ const idGenerator = (field, tableName) => {
         const currentNumber = parseInt(prevId.split('_')[1]);
         const nextNumber = currentNumber + 1;
         const nextClientId = `${field}_${nextNumber.toString().padStart(4, '0')}`;
+        console.log(nextClientId)
         resolve(nextClientId);
       }
     });

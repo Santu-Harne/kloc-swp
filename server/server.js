@@ -28,6 +28,8 @@ const mainRoute = require('./route/mainRoute')
 //primary routes
 app.use('/api/user', mainRoute.userRoute)
 app.use('/api', mainRoute.authRoute)
+app.use('/api/client',mainRoute.competencyAnalysisRoute)
+app.use('/api',mainRoute.coreCompetencyController)
 
 const start = async () => {
   try {

@@ -3,7 +3,6 @@ const db = require('./../db/database')
 
 // Function to generate a new sequence ID
 const idGenerator = (field, tableName) => {
-
   return new Promise((resolve, reject) => {
     const query = `SELECT MAX(${field + 'Id'}) AS prevId FROM ${tableName}`;
     db.query(query, (err, results) => {

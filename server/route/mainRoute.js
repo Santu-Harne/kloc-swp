@@ -1,13 +1,14 @@
 const userRoute = require('./userRoutes')
 const authRoute = require('./authRoute')
-const sectionRoute=require('./sectionRoute')
 
 
-module.exports = mainRoute
+
 const questionRoute = require('./questionRoutes')
 const clientresposeRoute =  require('./clientResponseRoutes')
 const competencyAnalysisRoute=require('./competencyAnalysisRoute')
 const coreCompetencyController=require('./coreCompetencyRoute')
+const sectionRoute=require('./sectionRoute')
+
 
 const mainRoute = {
   userRoute,

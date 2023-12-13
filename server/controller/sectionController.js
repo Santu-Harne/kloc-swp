@@ -13,13 +13,28 @@ const sectionController = {
   },
 
   getSectionById: async (req, res) => {
-    const sectionId = req.params.sectionId;
-    const query = 'SELECT * FROM section_table WHERE sectionID = ?';
-    db.query(query, [sectionId], (err, response) => {
-      if (err) assert.deepStrictEqual(err, null);
-      res.status(StatusCodes.OK).json({ msg: 'Section data', data: response });
-    });
+    try {
+      const sectionId = req.params.sectionID; // Change this line
+      //console.log('Received sectionId:', sectionId);
+  
+      const query = 'SELECT * FROM section_table WHERE sectionID = ?';
+      db.query(query, [sectionId], (err, response) => {
+        if (err) {
+          //console.error('Database Error:', err);
+          res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+        } else {
+          //console.log('Database Response:', response);
+          res.status(StatusCodes.OK).json({ msg: 'Section data', data: response });
+        }
+      });
+    } catch (error) {
+      //console.error('Error:', error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+    }
   },
+  
+  
+  
 
   // createSection: async (req, res) => {
   //   const reqBody = req.body;

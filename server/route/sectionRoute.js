@@ -5,10 +5,12 @@ const sectionController = require('../controller/sectionController');
 const router = express.Router();
 
 // Create a new section
-router.post('/createSection', sectionController.createSection);
+router.post('/create', sectionController.createSection);
 
 // Read all sections
 router.get('/getAllSections', sectionController.getAllSections);
+
+router.get('/getAllSectionsBySectionId/:sectionID', sectionController.getSectionById)
 
 // Update a section by ID
 router.put('/update/:sectionID', sectionController.updateSection);

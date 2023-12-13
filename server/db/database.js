@@ -1,6 +1,6 @@
 const assert = require('assert');
 const bcrypt = require("bcryptjs")
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
 //  Create a connection
 const connection = mysql.createPool({
@@ -288,7 +288,6 @@ const createAdminData = () => {
         userPassword: await bcrypt.hash('Santosh1437$', 10),
         userRole: 'admin',
         userMobileNo: "8660822483",
-        userAltMobileNo: "",
         userCompany: "klocTechnologies",
         userCountry: "India",
         userAddress: "Bangalore",

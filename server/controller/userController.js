@@ -30,7 +30,11 @@ const userController = {
           const newId = await idGenerator('user', 'user_table')
           const encPass = await bcrypt.hash(reqBody.userPassword, 10)
           const role = `${req.body.userEmail.endsWith('kloctechnologies.com') ? 'admin' : 'client'}`
+<<<<<<< HEAD
           console.log(encPass)
+=======
+
+>>>>>>> d0771f94f4c0c717dfca9a744230f2d7de6b4c7d
           const userData = { ...reqBody, userId: newId, userPassword: encPass, userRole: role, userFinalCommit: false }
           const query = 'INSERT INTO user_table SET ?';
 
@@ -75,6 +79,29 @@ const userController = {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message })
     }
   },
+<<<<<<< HEAD
  
+=======
+
+  deleteUser: async (req, res) => {
+    try {
+      const userId = req.params.userId
+      db.query('SELECT * FROM user_table WHERE userId = ?', userId, (err, user) => {
+        if (err) throw err;
+        else if (!user.length)
+          return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'No user present with provided userId!' })
+        else {
+          db.query('DELETE FROM user_table WHERE userId = ?', userId, (err, response) => {
+            if (err) assert.deepStrictEqual(err, null);
+            return res.status(StatusCodes.OK).json({ msg: 'User deleted successfully!', deletedId: userId })
+          })
+        }
+      })
+
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message })
+    }
+  }
+>>>>>>> d0771f94f4c0c717dfca9a744230f2d7de6b4c7d
 }
 module.exports = userController

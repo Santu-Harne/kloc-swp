@@ -8,7 +8,7 @@ const authController = {
   login: async (req, res) => {
     try {
       const { email, password } = req.body
-
+      console.log(req.body);
       db.query('SELECT * FROM user_table WHERE userEmail=?', email, async (err, response) => {
         if (err) assert.deepStrictEqual(err, null);
 

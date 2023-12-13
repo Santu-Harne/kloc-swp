@@ -3,7 +3,7 @@ import AllUsers from "../components/AllUsers";
 
 const userRoutes = (
   <>
-    {/* client Module Routes */}
+    {/* user Module Routes */}
     <Route exact path="/all_users" element={<AllUsers />} />
   </>
 )

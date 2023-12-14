@@ -3,6 +3,9 @@ const express = require('express')
 const cors = require('cors')
 const { StatusCodes } = require('http-status-codes')
 const path = require('path')
+const bodyParser = require('body-parser');
+
+
 
 //port
 const PORT = process.env.PORT || 7000
@@ -13,6 +16,8 @@ const app = express()
 // body parser
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(bodyParser.json());
+
 
 // middleware
 app.use(cors(
@@ -29,12 +34,12 @@ const mainRoute = require('./route/mainRoute')
 //primary routes
 // app.use('/api', allRoutes)
 app.use('/api/user', mainRoute.userRoute)
+app.use('/api/section', mainRoute.sectionRoute)
 app.use('/api', mainRoute.authRoute)
 app.use('/api', mainRoute.questionRoute)
-app.use('/api', mainRoute.clientResponseRoute)
-app.use('/api/client', mainRoute.competencyAnalysisRoute)
-app.use('/api', mainRoute.coreCompetencyRoute)
-
+app.use('/api', mainRoute.clientresposeRoute)
+app.use('/api', mainRoute.competencyAnalysisRoute)
+app.use('/api', mainRoute.coreCompetencyController)
 
 // default route
 app.all('*', (req, res) => {

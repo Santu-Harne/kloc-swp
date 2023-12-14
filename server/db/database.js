@@ -117,7 +117,7 @@ const userTableCreation = () => {
       userId VARCHAR(50) UNIQUE PRIMARY KEY,
       userName VARCHAR(50) NOT NULL,
       userEmail VARCHAR(50) NOT NULL,
-      userPassword VARCHAR(20) NOT NULL,
+      userPassword VARCHAR(100) NOT NULL,
       userMobileNo BIGINT NOT NULL,
       userAltMobileNo BIGINT,
       userRole VARCHAR(20) NOT NULL,
@@ -288,6 +288,7 @@ const createAdminData = () => {
         userPassword: await bcrypt.hash('Santosh1437$', 10),
         userRole: 'admin',
         userMobileNo: "8660822483",
+        userAltMobileNo: "",
         userCompany: "klocTechnologies",
         userCountry: "India",
         userAddress: "Bangalore",
@@ -303,6 +304,9 @@ const createAdminData = () => {
           console.error('Error creating adminData:', err);
         }
         else {
+          const subject = 'Confirmation of registration with KLOC-SWP'
+          const template = registerTemplate(userData.userName, userData.userEmail, 'Santosh1437$')
+          sendMail(userData.userEmail, subject, template)
           console.log('admin data created successfully!');
         }
       })

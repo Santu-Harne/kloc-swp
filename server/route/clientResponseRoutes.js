@@ -7,4 +7,4 @@ route.post('/create_clientresponse',clientResponseController.createClientRespons
 route.put('/update_clientresponse/:clientresponseID',clientResponseController.updateClientResponse)
 route.delete('/delete_clientresponse/:clientresponseID',clientResponseController.deleteClientResponse)
 route.get('/get_clientresponse/:clientresponseID',clientResponseController.getClientResponse)
-module.exports =  route 
+module.exports =  route  

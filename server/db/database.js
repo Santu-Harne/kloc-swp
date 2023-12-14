@@ -1,6 +1,8 @@
 const assert = require('assert');
 const bcrypt = require("bcryptjs")
 const mysql = require('mysql');
+const sendMail = require('./../middleware/mail')
+const registerTemplate = require('./../templates/registerTemplate')
 
 //  Create a connection
 const connection = mysql.createPool({
@@ -117,7 +119,7 @@ const userTableCreation = () => {
       userId VARCHAR(50) UNIQUE PRIMARY KEY,
       userName VARCHAR(50) NOT NULL,
       userEmail VARCHAR(50) NOT NULL,
-      userPassword VARCHAR(20) NOT NULL,
+      userPassword VARCHAR(100) NOT NULL,
       userMobileNo BIGINT NOT NULL,
       userAltMobileNo BIGINT,
       userRole VARCHAR(20) NOT NULL,
@@ -304,6 +306,9 @@ const createAdminData = () => {
           console.error('Error creating adminData:', err);
         }
         else {
+          const subject = 'Confirmation of registration with KLOC-SWP'
+          const template = registerTemplate(userData.userName, userData.userEmail, 'Santosh1437$')
+          sendMail(userData.userEmail, subject, template)
           console.log('admin data created successfully!');
         }
       })

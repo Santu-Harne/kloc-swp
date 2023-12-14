@@ -1,6 +1,5 @@
 const route = require('express').Router()
 const questionController = require('../controller/questionController')
-const questionController = require('../controller/questionController')
 
 route.get('/question/getAll/:sectionId', questionController.getAllQuestions)
 route.post('/question/create/:sectionId', questionController.createQuestions)

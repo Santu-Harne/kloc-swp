@@ -1,6 +1,6 @@
 const assert = require('assert');
 const bcrypt = require("bcryptjs")
-const mysql = require('mysql');
+// const mysql = require('mysql');
 const sendMail = require('./../middleware/mail')
 const registerTemplate = require('./../templates/registerTemplate')
 const mysql = require('mysql2');
@@ -105,7 +105,7 @@ const sectionTableCreation = () => {
         reject(err);
       }
       else {
-        if (result.warningCount === 0) {
+        if (result.warningStatus === 0) {
           console.log('section_table created');
         }
         resolve();
@@ -139,7 +139,7 @@ const userTableCreation = () => {
         reject(err);
       }
       else {
-        if (result.warningCount === 0) {
+        if (result.warningStatus === 0) {
           console.log('user_table created');
         }
         resolve();
@@ -163,7 +163,7 @@ const questionTableCreation = () => {
         reject(err);
       }
       else {
-        if (result.warningCount === 0) {
+        if (result.warningStatus === 0) {
           console.log('question_table created');
         }
         resolve();
@@ -190,7 +190,7 @@ const clientResponseTableCreation = () => {
         reject(err);
       }
       else {
-        if (result.warningCount === 0) {
+        if (result.warningStatus === 0) {
           console.log('clientResponse_table created');
         }
         resolve();
@@ -222,7 +222,7 @@ const competitionAnalysisTableCreation = () => {
         reject(err);
       }
       else {
-        if (result.warningCount === 0) {
+        if (result.warningStatus === 0) {
           console.log('competitionAnalysis_table created');
         }
         resolve();
@@ -243,7 +243,7 @@ const coreCompetencyNameTableCreation = () => {
         reject(err);
       }
       else {
-        if (result.warningCount === 0) {
+        if (result.warningStatus === 0) {
           console.log('coreCompetencyName_table created');
         }
         resolve();
@@ -270,7 +270,7 @@ const coreCompetenciesTableCreation = () => {
         reject(err);
       }
       else {
-        if (result.warningCount === 0) {
+        if (result.warningStatus === 0) {
           console.log('coreCompetencies_table created');
         }
         resolve();

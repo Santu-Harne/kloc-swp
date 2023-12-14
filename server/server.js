@@ -37,9 +37,9 @@ app.use('/api/user', mainRoute.userRoute)
 app.use('/api/section', mainRoute.sectionRoute)
 app.use('/api', mainRoute.authRoute)
 app.use('/api', mainRoute.questionRoute)
-app.use('/api', mainRoute.clientresposeRoute)
+app.use('/api', mainRoute.clientResponseRoute)
 app.use('/api', mainRoute.competencyAnalysisRoute)
-app.use('/api', mainRoute.coreCompetencyController)
+app.use('/api', mainRoute.coreCompetencyRoute)
 
 // default route
 app.all('*', (req, res) => {

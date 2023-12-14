@@ -25,6 +25,9 @@ connection.getConnection(async (err, connection) => {
       // Create all tables
       await createAllTables()
 
+      //Create admin data
+      createAdminData()
+
     } else {
       // connection.release();
       throw err;
@@ -90,8 +93,6 @@ const createAllTables = async () => {
   //7 Create coreCompetencies_table in the new database
   await coreCompetenciesTableCreation()
 
-  //Create admin data
-  createAdminData()
 }
 const sectionTableCreation = () => {
   return new Promise((resolve, reject) => {
@@ -121,8 +122,8 @@ const userTableCreation = () => {
       userName VARCHAR(50) NOT NULL,
       userEmail VARCHAR(50) NOT NULL,
       userPassword VARCHAR(100) NOT NULL,
-      userMobileNo BIGINT NOT NULL,
-      userAltMobileNo BIGINT,
+      userMobileNo VARCHAR(20) NOT NULL,
+      userAltMobileNo VARCHAR(20),
       userRole VARCHAR(20) NOT NULL,
       userCompany VARCHAR(40) NOT NULL,
       userCountry VARCHAR(50) NOT NULL,
@@ -291,6 +292,7 @@ const createAdminData = () => {
         userPassword: await bcrypt.hash('Santosh1437$', 10),
         userRole: 'admin',
         userMobileNo: "8660822483",
+        userAltMobileNo: "",
         userCompany: "klocTechnologies",
         userCountry: "India",
         userAddress: "Bangalore",

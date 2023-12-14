@@ -1,22 +1,20 @@
-const userRoute = require('./userRoutes')
+// const express = require('express');
 const authRoute = require('./authRoute')
-
-
-
+const userRoute = require('./userRoutes')
 const questionRoute = require('./questionRoutes')
-const clientresposeRoute =  require('./clientResponseRoutes')
-const competencyAnalysisRoute=require('./competencyAnalysisRoute')
-const coreCompetencyController=require('./coreCompetencyRoute')
-const sectionRoute=require('./sectionRoute')
+const clientResponseRoute = require('./clientResponseRoutes')
+const competencyAnalysisRoute = require('./competencyAnalysisRoute')
+const coreCompetencyRoute = require('./coreCompetencyRoute')
+const sectionRoute = require('./sectionRoute')
 
 
 const mainRoute = {
   userRoute,
   authRoute,
   questionRoute,
-  clientresposeRoute,
+  clientResponseRoute,
   competencyAnalysisRoute,
-  coreCompetencyController,
+  coreCompetencyRoute,
   sectionRoute
 }
 

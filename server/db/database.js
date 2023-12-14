@@ -26,7 +26,7 @@ connection.getConnection(async (err, connection) => {
       await createAllTables()
 
       //Create admin data
-  createAdminData()
+      createAdminData()
 
     } else {
       // connection.release();
@@ -92,30 +92,72 @@ const createAllTables = async () => {
 
   //7 Create coreCompetencies_table in the new database
   await coreCompetenciesTableCreation()
-
+}
+  const sectionTableCreation = () => {
+    return new Promise((resolve, reject) => {
+      const sectionTableCreateQuery = `CREATE TABLE IF NOT EXISTS section_table (
+        sectionID varchar(50) PRIMARY KEY NOT NULL,
+        sectionName varchar(50) DEFAULT NULL
+      )`;
   
-}
-const sectionTableCreation = () => {
-  return new Promise((resolve, reject) => {
-    const sectionTableCreateQuery = `CREATE TABLE IF NOT EXISTS section_table (
-      sectionID varchar(50) PRIMARY KEY NOT NULL,
-      sectionName varchar(50) DEFAULT NULL
-      )`
-    connection.query(sectionTableCreateQuery, (err, result) => {
-      if (err) {
-        console.error('Error creating section_table:', err);
-        reject(err);
-      }
-      else {
-        if (result.warningStatus === 0) {
-          console.log('section_table created');
+      connection.query(sectionTableCreateQuery, async (err, result) => {
+        if (err) {
+          console.error('Error creating section_table:', err);
+          reject(err);
+        } else {
+          if (result.warningStatus === 0) {
+            console.log('section_table created');
+          }
+          // Check if predefined values already exist
+          const checkQuery = 'SELECT COUNT(*) AS count FROM section_table WHERE sectionID IN (?)';
+          const predefinedIds = ['section_0001', 'section_0002','section_0003', 'section_0004','section_0005','section_0006','section_0007',
+                                  'section_0008','section_0009','section_0010','section_0011','section_0012','section_0013'];
+                          
+          connection.query(checkQuery, [predefinedIds], (checkErr, checkResult) => {
+            if (checkErr) {
+              //console.error('Error checking for existing predefined values:', checkErr);
+              reject(checkErr);
+            } else {
+              const existingCount = checkResult[0].count;
+  
+              if (existingCount === predefinedIds.length) {
+               // console.log('Predefined values already exist in section_table');
+                resolve();
+              } else {
+                // Insert predefined values into section_table
+                const predefinedValues = [
+                  { sectionID: 'section_0001', sectionName: 'Executive Summary' },
+                  { sectionID: 'section_0002', sectionName: 'Vision Board' },
+                  { sectionID: 'section_0003', sectionName: 'Core Ideology' },
+                  { sectionID: 'section_0004', sectionName: 'Core Purpose' },
+                  { sectionID: 'section_0005', sectionName: 'Envisioned Future' },
+                  { sectionID: 'section_0006', sectionName: 'Vivid Description' },
+                  { sectionID: 'section_0007', sectionName: 'Big Hairy Audacious Goal' },
+                  { sectionID: 'section_0008', sectionName: 'Mission' },
+                  { sectionID: 'section_0009', sectionName: 'Consumer Understanding' },
+                  { sectionID: 'section_0010', sectionName: 'Super Understanding' },
+                  { sectionID: 'section_0011', sectionName: 'Services' },
+                  { sectionID: 'section_0012', sectionName: 'Competition' },
+                  { sectionID: 'section_0013', sectionName: 'Core Competency' },
+                ];
+  
+                const insertValuesQuery = 'INSERT INTO section_table (sectionID, sectionName) VALUES ?';
+                connection.query(insertValuesQuery, [predefinedValues.map((value) => [value.sectionID, value.sectionName])], (insertErr, insertResult) => {
+                  if (insertErr) {
+                    console.error('Error inserting predefined values into section_table:', insertErr);
+                    reject(insertErr);
+                  } else {
+                    //console.log('Predefined values inserted into section_table');
+                    resolve();
+                  }
+                });
+              }
+            }
+          });
         }
-        resolve();
-      }
-    })
-  })
-
-}
+      });
+    });
+  };  
 const userTableCreation = () => {
   return new Promise((resolve, reject) => {
     const userTableCreateQuery = `CREATE TABLE IF NOT EXISTS user_table(
@@ -123,8 +165,8 @@ const userTableCreation = () => {
       userName VARCHAR(50) NOT NULL,
       userEmail VARCHAR(50) NOT NULL,
       userPassword VARCHAR(100) NOT NULL,
-      userMobileNo BIGINT NOT NULL,
-      userAltMobileNo BIGINT NULL,
+      userMobileNo VARCHAR(20) NOT NULL,
+      userAltMobileNo VARCHAR(20),
       userRole VARCHAR(20) NOT NULL,
       userCompany VARCHAR(40) NOT NULL,
       userCountry VARCHAR(50) NOT NULL,
@@ -318,7 +360,6 @@ const createAdminData = () => {
     }
   })
 }
-
 
 // Export the connection
 module.exports = connection;

@@ -12,5 +12,8 @@ route.delete('/delete_user/:userId', userController.deleteUser)
 route.put('/reset_password/:userId', userController.resetPassword)
 route.post('/forgot_password_mail', userController.forgotPasswordMail)
 route.put('/forgot_password', userController.forgotPassword)
+route.post('/test', async (req, res) => {
+  res.json('hai')
+})
 
 module.exports = route

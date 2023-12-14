@@ -25,6 +25,9 @@ connection.getConnection(async (err, connection) => {
       // Create all tables
       await createAllTables()
 
+      //Create admin data
+  createAdminData()
+
     } else {
       // connection.release();
       throw err;
@@ -90,8 +93,7 @@ const createAllTables = async () => {
   //7 Create coreCompetencies_table in the new database
   await coreCompetenciesTableCreation()
 
-  //Create admin data
-  createAdminData()
+  
 }
 const sectionTableCreation = () => {
   return new Promise((resolve, reject) => {
@@ -122,7 +124,7 @@ const userTableCreation = () => {
       userEmail VARCHAR(50) NOT NULL,
       userPassword VARCHAR(100) NOT NULL,
       userMobileNo BIGINT NOT NULL,
-      userAltMobileNo BIGINT,
+      userAltMobileNo BIGINT NULL,
       userRole VARCHAR(20) NOT NULL,
       userCompany VARCHAR(40) NOT NULL,
       userCountry VARCHAR(50) NOT NULL,

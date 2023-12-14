@@ -15,3 +15,4 @@ router.put('/update/:sectionId', sectionController.updateSection);
 router.delete('/delete/:sectionId', sectionController.deleteSection);
 
 module.exports = router;
+

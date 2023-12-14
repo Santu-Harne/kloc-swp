@@ -1,5 +1,7 @@
 require('dotenv').config()
 const express = require('express')
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger-output.json');
 const cors = require('cors')
 const { StatusCodes } = require('http-status-codes')
 const path = require('path')
@@ -12,6 +14,9 @@ const PORT = process.env.PORT || 7000
 
 // ref
 const app = express()
+
+// all api route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // body parser
 app.use(express.urlencoded({ extended: true }))
@@ -28,18 +33,10 @@ app.use(cors(
 ))
 
 // route imports
-const mainRoute = require('./route/mainRoute')
-// const allRoutes = require('./route/mainRoute')
+const allRoutes = require('./route/mainRoute')
 
 //primary routes
-// app.use('/api', allRoutes)
-app.use('/api/user', mainRoute.userRoute)
-app.use('/api/section', mainRoute.sectionRoute)
-app.use('/api', mainRoute.authRoute)
-app.use('/api', mainRoute.questionRoute)
-app.use('/api', mainRoute.clientResponseRoute)
-app.use('/api', mainRoute.competencyAnalysisRoute)
-app.use('/api', mainRoute.coreCompetencyRoute)
+app.use('/', allRoutes)
 
 // default route
 app.all('*', (req, res) => {

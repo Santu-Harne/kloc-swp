@@ -803,12 +803,12 @@
         }
       }
     },
-    "/api/section/get/{sectionID}": {
+    "/api/section/get/{sectionId}": {
       "get": {
         "description": "",
         "parameters": [
           {
-            "name": "sectionID",
+            "name": "sectionId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -821,12 +821,12 @@
         }
       }
     },
-    "/api/section/update/{sectionID}": {
+    "/api/section/update/{sectionId}": {
       "put": {
         "description": "",
         "parameters": [
           {
-            "name": "sectionID",
+            "name": "sectionId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -839,12 +839,12 @@
         }
       }
     },
-    "/api/section/delete/{sectionID}": {
+    "/api/section/delete/{sectionId}": {
       "delete": {
         "description": "",
         "parameters": [
           {
-            "name": "sectionID",
+            "name": "sectionId",
             "in": "path",
             "required": true,
             "type": "string"

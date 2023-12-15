@@ -50,9 +50,7 @@ const userController = {
         else {
           const newId = await idGenerator('user', 'user_table')
           const encPass = await bcrypt.hash(reqBody.userPassword, 10)
-          const role = `${req.body.userEmail.endsWith('kloctechnologies.com') ? 'admin' : 'client'}`
-
-          const userData = { ...reqBody, userId: newId, userPassword: encPass, userRole: role, userFinalCommit: false }
+          const userData = { ...reqBody, userId: newId, userPassword: encPass, userRole: 'client', userFinalCommit: false }
 
           const query = 'INSERT INTO user_table SET ?';
 

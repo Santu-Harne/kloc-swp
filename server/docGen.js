@@ -13,6 +13,3 @@ const routes = ['./route/mainRoute.js']
 
 swaggerAutogen(outputFile, routes, doc)
 
-const swaggerSpec = swaggerAutogen(outputFile, routes, doc)
-
-module.exports = swaggerSpec;

@@ -271,27 +271,86 @@ const competitionAnalysisTableCreation = () => {
     })
   })
 }
+// const coreCompetencyNameTableCreation = () => {
+//   return new Promise((resolve, reject) => {
+//     const coreCompetencyNameTableCreateQuery = `CREATE TABLE IF NOT EXISTS coreCompetencyName_table (
+//       coreCompetencyId  VARCHAR(50) PRIMARY KEY NOT NULL,
+//       competencyName TEXT,
+//       competencyDescription TEXT
+//       )`
+//     connection.query(coreCompetencyNameTableCreateQuery, (err, result) => {
+//       if (err) {
+//         console.error('Error creating coreCompetencyName_table:', err);
+//         reject(err);
+//       }
+//       else {
+//         if (result.warningStatus === 0) {
+//           console.log('coreCompetencyName_table created');
+//         }
+//         resolve();
+//       }
+//     })
+//   })
+// }
 const coreCompetencyNameTableCreation = () => {
   return new Promise((resolve, reject) => {
     const coreCompetencyNameTableCreateQuery = `CREATE TABLE IF NOT EXISTS coreCompetencyName_table (
       coreCompetencyId  VARCHAR(50) PRIMARY KEY NOT NULL,
       competencyName TEXT,
       competencyDescription TEXT
-      )`
-    connection.query(coreCompetencyNameTableCreateQuery, (err, result) => {
+      )`;
+
+    connection.query(coreCompetencyNameTableCreateQuery, async (err, result) => {
       if (err) {
         console.error('Error creating coreCompetencyName_table:', err);
         reject(err);
-      }
-      else {
+      } else {
         if (result.warningStatus === 0) {
           console.log('coreCompetencyName_table created');
         }
-        resolve();
+
+        // Add predefined values if they don't already exist
+        const checkQuery = 'SELECT COUNT(*) AS count FROM coreCompetencyName_table WHERE coreCompetencyId IN (?)';
+        const predefinedIds = ['corecompetency_0001','corecompetency_0002','corecompetency_0003','corecompetency_0004'];
+
+        connection.query(checkQuery, [predefinedIds], (checkErr, checkResult) => {
+          if (checkErr) {
+            console.error('Error checking for existing predefined values:', checkErr);
+            reject(checkErr);
+          } else {
+            const existingCount = checkResult[0].count;
+
+            if (existingCount === predefinedIds.length) {
+              console.log('Predefined values already exist in coreCompetencyName_table');
+              resolve();
+            } else {
+              // Insert predefined values into coreCompetencyName_table
+              const predefinedValues = [
+                { coreCompetencyId: 'corecompetency_0001', competencyName: 'High Quality Reliable services', competencyDescription: '' },
+                { coreCompetencyId: 'corecompetency_0002', competencyName: 'Retain high quality cleaning staff', competencyDescription: '' },
+                { coreCompetencyId: 'corecompetency_0003', competencyName: 'Ability ot generate word of mouth', competencyDescription: '' },
+                { coreCompetencyId: 'corecompetency_0004', competencyName: 'Retain high quality cleaning staff', competencyDescription: '' },
+              ];
+
+              const insertValuesQuery = 'INSERT INTO coreCompetencyName_table (coreCompetencyId, competencyName, competencyDescription) VALUES ?';
+              connection.query(insertValuesQuery, [predefinedValues.map((value) => [value.coreCompetencyId, value.competencyName, value.competencyDescription])], (insertErr, insertResult) => {
+                if (insertErr) {
+                  console.error('Error inserting predefined values into coreCompetencyName_table:', insertErr);
+                  reject(insertErr);
+                } else {
+                  console.log('Predefined values inserted into coreCompetencyName_table');
+                  resolve();
+                }
+              });
+            }
+          }
+        });
       }
-    })
-  })
-}
+    });
+  });
+};
+
+
 const coreCompetenciesTableCreation = () => {
   return new Promise((resolve, reject) => {
     const coreCompetenciesTableCreateQuery = `CREATE TABLE IF NOT EXISTS coreCompetencies_table (

@@ -5,7 +5,7 @@ const authRoute = require('./authRoute')
 
 const questionRoute = require('./questionRoutes')
 const clientresposeRoute =  require('./clientResponseRoutes')
-const competencyAnalysisRoute=require('./competencyAnalysisRoute')
+const competitiveAnalysisRoute=require('./competitiveAnalysisRoute')
 const coreCompetencyController=require('./coreCompetencyRoute')
 const sectionRoute=require('./sectionRoute')
 
@@ -15,7 +15,7 @@ const mainRoute = {
   authRoute,
   questionRoute,
   clientresposeRoute,
-  competencyAnalysisRoute,
+  competitiveAnalysisRoute,
   coreCompetencyController,
   sectionRoute
 }

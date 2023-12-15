@@ -36,7 +36,7 @@ app.use('/api/section', mainRoute.sectionRoute)
 app.use('/api', mainRoute.authRoute)
 app.use('/api',mainRoute.questionRoute)
 app.use('/api',mainRoute.clientresposeRoute)
-app.use('/api',mainRoute.competencyAnalysisRoute)
+app.use('/api',mainRoute.competitiveAnalysisRoute)
 app.use('/api',mainRoute.coreCompetencyController)
 
 // default route

@@ -4,72 +4,83 @@ const { StatusCodes } = require('http-status-codes')
 const db = require('../db/database')
 const idGenerator = require('../utils/idGenerator')
 const clientResponseController = {
-   getAllClientResponses: async (req, res) => {
+    getAllClientResponses: async (req, res) => {
       try {
-        const query = 'SELECT * FROM clientresponse_table'
-        db.query(query, (err, response) => {
-          if (err) assert.deepStrictEqual(err, null);
-          res.status(StatusCodes.OK).json({ msg: 'All clientResponse data', data: response })
+        const userId=req.params.userId
+        const questionId=req.params.questionId
+        db.query(`SELECT userId FROM user_table WHERE userId=?`,userId,async(userErr,userRes)=>{
+          if (userErr){
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+            return;
+          }
+          if (userRes.length===0){
+            res.status(StatusCodes.BAD_REQUEST).json({ msg: 'User Not Found' });
+            return;
+          }
+          db.query(`SELECT questionId FROM question_table WHERE questionId=?`,questionId,async(quesErr,quesRes)=>{
+            if (quesErr){
+              res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+              return;
+            }
+            if (quesRes.length===0){
+              res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Question Not Found' });
+              return;
+            }
+            const query = 'SELECT * FROM clientresponse_table'
+            db.query(query, (err, response) => {
+              if (err) assert.deepStrictEqual(err, null);
+              res.status(StatusCodes.OK).json({ msg: 'All clientResponse data', data: response })
+            })
+          })
         })
       } catch (error) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message })
       }
     },
-
     createClientResponse :async (req, res) => {  
       try {
         const reqBody = req.body;
+        const userId=req.params.userId
+        const questionId=req.params.questionId
     
         // Assuming you have a function to generate a unique clientresponse ID
-        const newClientResponseId = await idGenerator('clientresponse', 'clientresponse_table');
-    
-        // Ensure that the provided questionID is a valid foreign key
-        db.query('SELECT * FROM question_table WHERE questionID = ?', [reqBody.questionID], (err, questionResponse) => {
-          if (err) {
-            throw new Error(err.message);
-          } else if (questionResponse.length === 0) {
-            return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Invalid questionID. Question not found.' });
-          } else {
-            // Ensure that the provided userID is a valid foreign key
-            db.query('SELECT * FROM user_table WHERE userID = ?', [reqBody.userID], (err, userResponse) => {
-              if (err) {
-                throw new Error(err.message);
-              } else if (userResponse.length === 0) {
-                return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Invalid userID. User not found.' });
-              } else {
-                // Construct the client response data
-                const clientResponseData = {
-                  clientresponseID: newClientResponseId,
-                  questionID: reqBody.questionID,
-                  userID: reqBody.userID,
-                  clientInput: reqBody.clientInput,
-                  comments: reqBody.comments,
-                  klocinput: reqBody.klocinput,
-                };
-    
-                // Insert the new client response into the 'clientresponse_table' using parameterized query
-                const query = 'INSERT INTO clientresponse_table SET ?';
-                db.query(query, [clientResponseData], (err, response) => {
-                  if (err) {
-                    throw new Error(err.message);
-                  }
-                  return res.status(StatusCodes.OK).json({
-                    msg: 'Client response created successfully',
-                    data: clientResponseData,
-                  });
-                });
-              }
-            });
+        const newClientResponseId = await idGenerator('clientResponse', 'clientResponse_table');
+
+        db.query(`SELECT userId FROM user_table WHERE userId=?`,userId,async(userErr,userRes)=>{
+          if (userErr){
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+            return;
           }
-        });
+          if (userRes.length===0){
+            res.status(StatusCodes.BAD_REQUEST).json({ msg: 'User Not Found' });
+            return;
+          }
+          db.query(`SELECT questionId FROM question_table WHERE questionId=?`,questionId,async(quesErr,quesRes)=>{
+            if (quesErr){
+              res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+              return;
+            }
+            if (quesRes.length===0){
+              res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Question Not Found' });
+              return;
+            }
+            const clientResponseData={...reqBody,userId:userId,questionId:questionId,clientResponseId:newClientResponseId}
+            const query = 'INSERT INTO clientresponse_table SET ?';
+            db.query(query, clientResponseData, (finalErr, finalRes) => {
+              console.log(finalErr)
+              if (finalErr) {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                return;
+              }
+              return res.status(StatusCodes.OK).json({ msg: 'ClientResponse Data Created Successfully', data: clientResponseData });
+            });
+          })
+        })
       } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
       }
     
     },
-    // Use the createClientResponse function in your routes
-    
-
     updateClientResponse :async (req, res) => {
       try {
         const reqBody = req.body;
@@ -125,7 +136,6 @@ const clientResponseController = {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
       }
     },
-    
     deleteClientResponse: async (req, res) => {
       try {
         const clientresponseID = req.params.clientresponseID; // Assuming the clientresponseID is in the route params
@@ -152,8 +162,7 @@ const clientResponseController = {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
       }
     },
-    
-     getClientResponse: async (req, res) => {
+    getClientResponse: async (req, res) => {
       try {
         const clientresponseID = req.params.clientresponseID; // Assuming the clientresponseID is in the route params
     
@@ -174,9 +183,5 @@ const clientResponseController = {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
       }
     }
-    
-    
-    
-    
 }
 module.exports  = clientResponseController

@@ -14,42 +14,40 @@ const sectionController = {
 
   getSectionById: async (req, res) => {
     try {
-      const sectionId = req.params.sectionID; // Change this line
-      //console.log('Received sectionId:', sectionId);
-  
-      const query = 'SELECT * FROM section_table WHERE sectionID = ?';
-      db.query(query, [sectionId], (err, response) => {
+      const sectionID = req.params.sectionId;
+      // console.log('Received sectionID:', sectionID);
+      const query = 'SELECT * FROM section_table WHERE sectionId = ?';
+      db.query(query, [sectionID], (err, response) => {
         if (err) {
           //console.error('Database Error:', err);
           res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
         } else {
-          //console.log('Database Response:', response);
-          res.status(StatusCodes.OK).json({ msg: 'Section data', data: response });
+          if (response && response.length > 0) {
+            res.status(StatusCodes.OK).json({ msg: 'Section data', data: response });
+          } else {
+            res.status(StatusCodes.NOT_FOUND).json({ msg: 'Section not found' });
+          }
         }
       });
     } catch (error) {
-      //console.error('Error:', error);
+      console.error('Error:', error);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
     }
   },
-  
-  
-  
-
   // createSection: async (req, res) => {
   //   const reqBody = req.body;
   //   // console.log('Request Body:', reqBody); // Add this line
   //   const newId = await idGenerator('section', 'section_table');
   //   // res.json(newId)
-  //   const sectionData = { sectionID: newId, sectionName: reqBody.sectionName };
+  //   const sectionData = { sectionId: newId, sectionName: reqBody.sectionName };
   //   const query = 'INSERT INTO section_table SET ?';
-  
+
   //   db.query(query, sectionData, (err, response) => {
   //     if (err) assert.deepStrictEqual(err, null);
   //     res.status(StatusCodes.OK).json({ msg: 'Section created successfully', data: sectionData });
   //   });
   // },
-  
+
   createSection: async (req, res) => {
     const reqBody = req.body;
 
@@ -57,13 +55,13 @@ const sectionController = {
       const insertedSections = [];
       for (const section of reqBody) {
         const newId = await idGenerator('section', 'section_table');
-        const sectionData = { sectionID: newId, sectionName: section.sectionName };
+        const sectionData = { sectionId: newId, sectionName: section.sectionName };
         const query = 'INSERT INTO section_table SET ?';
 
         await new Promise((resolve, reject) => {
           db.query(query, sectionData, (err, response) => {
             if (err) {
-              console.error('Database Error:', err);
+              //console.error('Database Error:', err);
               reject(err);
             } else {
               insertedSections.push(sectionData);
@@ -72,35 +70,49 @@ const sectionController = {
           });
         });
       }
-
       res.status(StatusCodes.OK).json({ msg: 'Sections created successfully', data: insertedSections });
     } catch (error) {
       console.error('Error:', error);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
     }
   },
-  
 
   updateSection: async (req, res) => {
-    const sectionId = req.params.sectionID;
+    const sectionID = req.params.sectionId;
     const reqBody = req.body;
-    const query = 'UPDATE section_table SET ? WHERE sectionID = ?';
+    const query = 'UPDATE section_table SET ? WHERE sectionId = ?';
 
-    db.query(query, [reqBody, sectionId], (err, response) => {
-      if (err) assert.deepStrictEqual(err, null);
-      res.status(StatusCodes.OK).json({ msg: 'Section updated successfully' });
+    db.query(query, [reqBody, sectionID], (err, response) => {
+      if (err) {
+        console.error('Database Error:', err);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+      } else {
+        if (response && response.affectedRows > 0) {
+          res.status(StatusCodes.OK).json({ msg: 'Section updated successfully' });
+        } else {
+          res.status(StatusCodes.NOT_FOUND).json({ msg: 'Section not found' });
+        }
+      }
     });
   },
 
   deleteSection: async (req, res) => {
-    const sectionId = req.params.sectionID;
-    const query = 'DELETE FROM section_table WHERE sectionID = ?';
-
-    db.query(query, [sectionId], (err, response) => {
-      if (err) assert.deepStrictEqual(err, null);
-      res.status(StatusCodes.OK).json({ msg: 'Section deleted successfully' });
+    const sectionID = req.params.sectionId;
+    const query = 'DELETE FROM section_table WHERE sectionId = ?';
+    db.query(query, [sectionID], (err, response) => {
+      if (err) {
+        console.error('Database Error:', err);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+      } else {
+        if (response && response.affectedRows > 0) {
+          res.status(StatusCodes.OK).json({ msg: 'Section deleted successfully' });
+        } else {
+          res.status(StatusCodes.NOT_FOUND).json({ msg: 'Section not found' });
+        }
+      }
     });
-  }
+  },
 };
+
 
 module.exports = sectionController;

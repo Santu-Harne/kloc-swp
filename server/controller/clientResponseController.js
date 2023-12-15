@@ -184,4 +184,4 @@ const clientResponseController = {
       }
     }
 }
-module.exports  = clientResponseController
+module.exports = clientResponseController

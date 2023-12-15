@@ -108,7 +108,6 @@ const sectionTableCreation = () => {
         if (result.warningStatus === 0) {
           console.log('section_table created');
         }
-        // Check if predefined values already exist
         const checkQuery = 'SELECT COUNT(*) AS count FROM section_table WHERE sectionID IN (?)';
         const predefinedIds = ['section_0001', 'section_0002', 'section_0003', 'section_0004', 'section_0005', 'section_0006', 'section_0007',
           'section_0008', 'section_0009', 'section_0010', 'section_0011', 'section_0012', 'section_0013'];
@@ -211,7 +210,6 @@ const questionTableCreation = () => {
       }
     })
   })
-
 }
 const clientResponseTableCreation = () => {
   return new Promise((resolve, reject) => {
@@ -272,27 +270,7 @@ const competitionAnalysisTableCreation = () => {
     })
   })
 }
-// const coreCompetencyNameTableCreation = () => {
-//   return new Promise((resolve, reject) => {
-//     const coreCompetencyNameTableCreateQuery = `CREATE TABLE IF NOT EXISTS coreCompetencyName_table (
-//       coreCompetencyId  VARCHAR(50) PRIMARY KEY NOT NULL,
-//       competencyName TEXT,
-//       competencyDescription TEXT
-//       )`
-//     connection.query(coreCompetencyNameTableCreateQuery, (err, result) => {
-//       if (err) {
-//         console.error('Error creating coreCompetencyName_table:', err);
-//         reject(err);
-//       }
-//       else {
-//         if (result.warningStatus === 0) {
-//           console.log('coreCompetencyName_table created');
-//         }
-//         resolve();
-//       }
-//     })
-//   })
-// }
+
 const coreCompetencyNameTableCreation = () => {
   return new Promise((resolve, reject) => {
     const coreCompetencyNameTableCreateQuery = `CREATE TABLE IF NOT EXISTS coreCompetencyName_table (
@@ -322,7 +300,7 @@ const coreCompetencyNameTableCreation = () => {
             const existingCount = checkResult[0].count;
 
             if (existingCount === predefinedIds.length) {
-              console.log('Predefined values already exist in coreCompetencyName_table');
+              //console.log('Predefined values already exist in coreCompetencyName_table');
               resolve();
             } else {
               // Insert predefined values into coreCompetencyName_table
@@ -358,10 +336,12 @@ const coreCompetenciesTableCreation = () => {
       coreCompetenciesId  VARCHAR(50) PRIMARY KEY NOT NULL,
       userId VARCHAR(50) NOT NULL,
       coreCompetencyNameId  VARCHAR(50)  NOT NULL,
+      coreCompetencyNameId  VARCHAR(50)  NOT NULL,
       description TEXT,
       importance TEXT,
       defensibility TEXT,
       klocInput TEXT,
+      FOREIGN KEY (coreCompetencyNameId) REFERENCES coreCompetencyName_table(coreCompetencyNameId),
       FOREIGN KEY (coreCompetencyNameId) REFERENCES coreCompetencyName_table(coreCompetencyNameId),
       FOREIGN KEY (userId) REFERENCES user_table(userId)
       )`

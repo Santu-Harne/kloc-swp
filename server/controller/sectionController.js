@@ -15,11 +15,9 @@ const sectionController = {
   getSectionById: async (req, res) => {
     try {
       const sectionID = req.params.sectionId;
-      // console.log('Received sectionID:', sectionID);
       const query = 'SELECT * FROM section_table WHERE sectionId = ?';
       db.query(query, [sectionID], (err, response) => {
         if (err) {
-          //console.error('Database Error:', err);
           res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
         } else {
           if (response && response.length > 0) {
@@ -34,23 +32,9 @@ const sectionController = {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
     }
   },
-  // createSection: async (req, res) => {
-  //   const reqBody = req.body;
-  //   // console.log('Request Body:', reqBody); // Add this line
-  //   const newId = await idGenerator('section', 'section_table');
-  //   // res.json(newId)
-  //   const sectionData = { sectionId: newId, sectionName: reqBody.sectionName };
-  //   const query = 'INSERT INTO section_table SET ?';
-
-  //   db.query(query, sectionData, (err, response) => {
-  //     if (err) assert.deepStrictEqual(err, null);
-  //     res.status(StatusCodes.OK).json({ msg: 'Section created successfully', data: sectionData });
-  //   });
-  // },
 
   createSection: async (req, res) => {
     const reqBody = req.body;
-
     try {
       const insertedSections = [];
       for (const section of reqBody) {

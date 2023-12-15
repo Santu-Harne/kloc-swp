@@ -8,9 +8,9 @@ route.put('/corecompetencyname/update/:corecompetencyId',coreCompetencyControlle
 route.delete('/corecompetencyname/delete/:corecompetencyId',coreCompetencyController.deleteCoreCompetencyName)
 
 
-route.post('/corecompetencies/create/:userId/:corecompetencyId',coreCompetencyController.createCoreCompetencies)
-route.get('/corecompetencies/getAll/:userId/:corecompetencyId',coreCompetencyController.getAllCoreCompetencies)
-route.get('/corecompetencies/get/:userId/:corecompetencyId/:competencyId',coreCompetencyController.getCoreCompetencies)
+route.post('/corecompetencies/create/:userId/',coreCompetencyController.createCoreCompetencies)
+route.get('/corecompetencies/getAll/:userId/',coreCompetencyController.getAllCoreCompetencies)
+route.get('/corecompetencies/get/:userId/:corecompetencyId/',coreCompetencyController.getCoreCompetencies)
 route.put('/corecompetencies/update/:userId/:corecompetencyId/:competencyId',coreCompetencyController.updateCoreCompetencies)
 route.delete('/corecompetencies/delete/:userId/:corecompetencyId/:competencyId',coreCompetencyController.deleteCoreCompetencies)
 

@@ -330,19 +330,16 @@ const coreCompetencyNameTableCreation = () => {
   });
 };
 
-
 const coreCompetenciesTableCreation = () => {
   return new Promise((resolve, reject) => {
     const coreCompetenciesTableCreateQuery = `CREATE TABLE IF NOT EXISTS coreCompetencies_table (
       coreCompetenciesId  VARCHAR(50) PRIMARY KEY NOT NULL,
       userId VARCHAR(50) NOT NULL,
       coreCompetencyNameId  VARCHAR(50)  NOT NULL,
-      coreCompetencyNameId  VARCHAR(50)  NOT NULL,
       description TEXT,
       importance TEXT,
       defensibility TEXT,
       klocInput TEXT,
-      FOREIGN KEY (coreCompetencyNameId) REFERENCES coreCompetencyName_table(coreCompetencyNameId),
       FOREIGN KEY (coreCompetencyNameId) REFERENCES coreCompetencyName_table(coreCompetencyNameId),
       FOREIGN KEY (userId) REFERENCES user_table(userId)
       )`
@@ -366,48 +363,14 @@ const createAdminData = () => {
       throw err;
     }
     else if (response.length === 0) {
-      const adminData = [
-        {
-          userId: 'user_0001',
-          userName: 'Santosh',
-          userEmail: 'santosh.283143@gmail.com',
-          userPassword: await bcrypt.hash('Santosh1437$', 10),
-          userRole: 'admin',
-          userMobileNo: '8660822483',
-          userAltMobileNo: '',
-          userCompany: 'klocTechnologies',
-          userCountry: 'India',
-          userAddress: 'Bangalore',
-          userDesignation: 'Developer',
-          userDepartment: 'Frontend',
-          userWebsiteUrl: 'www.google.com',
-          userSocialMediaUrl: 'www.facebook.com',
-          userFinalCommit: false,
-        },
-        {
-          userId: 'user_0002',
-          userName: 'Praveen',
-          userEmail: 'praveenjayaram311@gmail.com',
-          userPassword: await bcrypt.hash('Praveen@143', 10),
-          userRole: 'admin',
-          userMobileNo: '8660822483',
-          userAltMobileNo: '',
-          userCompany: 'klocTechnologies',
-          userCountry: 'India',
-          userAddress: 'Bangalore',
-          userDesignation: 'Developer',
-          userDepartment: 'Frontend',
-          userWebsiteUrl: 'www.google.com',
-          userSocialMediaUrl: 'www.facebook.com',
-          userFinalCommit: false,
-        },
-      ];
 
-      // const hashedData = adminData.map(async (data) => {
-      //   return { ...data, userPassword: await bcrypt.hash('Praveen@143', 10) }
-      // })
-      const values = adminData.map(user => Object.values(user));
-      const columns = Object.keys(adminData[0]);
+      const hashedAdminData = await Promise.all(adminData.map(async (user) => {
+        const hashedPassword = await bcrypt.hash(user.userPassword, 10);
+        return { ...user, userPassword: hashedPassword };
+      }));
+
+      const values = hashedAdminData.map(user => Object.values(user));
+      const columns = Object.keys(hashedAdminData[0]);
 
       const placeholders = values.map(() => `(${columns.map(() => '?').join(', ')})`).join(', ');
 
@@ -419,8 +382,10 @@ const createAdminData = () => {
           console.error('Error creating adminData:', err);
         } else {
           const subject = 'Confirmation of registration with KLOC-SWP';
-          const template = registerTemplate(adminData[0].userName, adminData[0].userEmail, 'Santosh1437$');
-          // sendMail(userData[0].userEmail, subject, template)
+          adminData.forEach(user => {
+            const template = registerTemplate(user.userName, user.userEmail, user.userPassword,);
+            sendMail(user.userEmail, subject, template)
+          })
           console.log('admin data created successfully!');
         }
       });

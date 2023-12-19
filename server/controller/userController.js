@@ -42,9 +42,9 @@ const userController = {
   createUser: async (req, res) => {
     try {
       const reqBody = req.body
-      db.query('SELECT * FROM user_table WHERE userEmail = ?', reqBody.userEmail, async (err, response) => {
+      db.query('SELECT * FROM user_table WHERE userEmail = ?', reqBody.userEmail, async (err, resData) => {
         if (err) assert.deepStrictEqual(err, null);
-        else if (response.length > 0) {
+        else if (resData.length > 0) {
           return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'User already exists with this email!' })
         }
         else {
@@ -54,12 +54,12 @@ const userController = {
 
           const query = 'INSERT INTO user_table SET ?';
 
-          db.query(query, userData, (err, response) => {
+          db.query(query, userData, (err, data) => {
             if (err) assert.deepStrictEqual(err, null);
             else {
               const subject = 'Confirmation of registration with KLOC-SWP'
               const template = registerTemplate(reqBody.userName, reqBody.userEmail, reqBody.userPassword)
-              sendMail(userData.userEmail, subject, template)
+              // sendMail(userData.userEmail, subject, template)
               return res.status(StatusCodes.OK).json({ msg: 'User data created successfully', data: userData })
             }
           })

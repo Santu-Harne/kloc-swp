@@ -328,7 +328,6 @@ const coreCompetencyNameTableCreation = () => {
   });
 };
 
-
 const coreCompetenciesTableCreation = () => {
   return new Promise((resolve, reject) => {
     const coreCompetenciesTableCreateQuery = `CREATE TABLE IF NOT EXISTS coreCompetencies_table (

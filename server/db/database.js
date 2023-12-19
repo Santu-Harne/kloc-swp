@@ -171,7 +171,7 @@ const userTableCreation = () => {
       userDepartment VARCHAR(40),
       userWebsiteUrl VARCHAR(100),
       userSocialMediaUrl VARCHAR(100),
-      userFinalCommit BOOLEAN NOT NULL
+      userFinalCommit BOOLEAN DEFAULT FALSE
   )`
     connection.query(userTableCreateQuery, (err, result) => {
       if (err) {
@@ -239,9 +239,9 @@ const clientResponseTableCreation = () => {
 }
 const competitionAnalysisTableCreation = () => {
   return new Promise((resolve, reject) => {
-    const competitionAnalysisTableCreateQuery = `CREATE TABLE IF NOT EXISTS competitionAnalysis_table (
-      competitionName TEXT,
-      competitionAnalysisId VARCHAR(50) PRIMARY KEY NOT NULL,
+    const competitionAnalysisTableCreateQuery = `CREATE TABLE IF NOT EXISTS competitiveAnalysis_table (
+      competitiveName TEXT,
+      competitiveAnalysisId VARCHAR(50) PRIMARY KEY NOT NULL,
       companyProfile TEXT,
       keyCompetitiveAdvantage TEXT,
       targetMarket TEXT,
@@ -252,6 +252,7 @@ const competitionAnalysisTableCreation = () => {
       weaknesses TEXT,
       opportunities TEXT,
       threats TEXT,
+      klocInput TEXT,
       userId VARCHAR(50) NOT NULL,
       FOREIGN KEY ( userId) REFERENCES user_table ( userId)
       )`
@@ -274,8 +275,8 @@ const coreCompetencyNameTableCreation = () => {
   return new Promise((resolve, reject) => {
     const coreCompetencyNameTableCreateQuery = `CREATE TABLE IF NOT EXISTS coreCompetencyName_table (
       coreCompetencyNameId  VARCHAR(50) PRIMARY KEY NOT NULL,
-      coreCompetencyName  TEXT,
-      coreCompetencyDescription  TEXT
+      coreCompetencyName TEXT,
+      coreCompetencyDescription TEXT
       )`;
 
     connection.query(coreCompetencyNameTableCreateQuery, async (err, result) => {
@@ -289,7 +290,7 @@ const coreCompetencyNameTableCreation = () => {
 
         // Add predefined values if they don't already exist
         const checkQuery = 'SELECT COUNT(*) AS count FROM coreCompetencyName_table WHERE coreCompetencyNameId IN (?)';
-        const predefinedIds = ['coreCompetencyName_0001', 'coreCompetencyName_0002', 'coreCompetencyName_0003', 'coreCompetencyName_0004'];
+        const predefinedIds = ['coreCompetencyName_0001','coreCompetencyName_0002','coreCompetencyName_0003','coreCompetencyName_0004'];
 
         connection.query(checkQuery, [predefinedIds], (checkErr, checkResult) => {
           if (checkErr) {
@@ -304,14 +305,14 @@ const coreCompetencyNameTableCreation = () => {
             } else {
               // Insert predefined values into coreCompetencyName_table
               const predefinedValues = [
-                { coreCompetencyNameId: 'coreCompetencyName_0001', coreCompetencyName : 'High Quality Reliable services', coreCompetencyDescription : '' },
-                { coreCompetencyNameId: 'coreCompetencyName_0002', coreCompetencyName : 'Ability to upsell', coreCompetencyDescription : '' },
-                { coreCompetencyNameId: 'coreCompetencyName_0003', coreCompetencyName : 'Ability ot generate word of mouth', coreCompetencyDescription : '' },
-                { coreCompetencyNameId: 'coreCompetencyName_0004', coreCompetencyName : 'Retain high quality cleaning staff', coreCompetencyDescription : '' },
+                { coreCompetencyNameId: 'coreCompetencyName_0001', coreCompetencyName: 'High Quality Reliable services', coreCompetencyDescription: '' },
+                { coreCompetencyNameId: 'coreCompetencyName_0002', coreCompetencyName: 'Ability to upsell', coreCompetencyDescription: '' },
+                { coreCompetencyNameId: 'coreCompetencyName_0003', coreCompetencyName: 'Ability ot generate word of mouth', coreCompetencyDescription: '' },
+                { coreCompetencyNameId: 'coreCompetencyName_0004', coreCompetencyName: 'Retain high quality cleaning staff', coreCompetencyDescription: '' },
               ];
 
-              const insertValuesQuery = 'INSERT INTO coreCompetencyName_table (coreCompetencyNameId, coreCompetencyName , coreCompetencyDescription ) VALUES ?';
-              connection.query(insertValuesQuery, [predefinedValues.map((value) => [value.coreCompetencyNameId, value.coreCompetencyName , value.coreCompetencyDescription ])], (insertErr, insertResult) => {
+              const insertValuesQuery = 'INSERT INTO coreCompetencyName_table (coreCompetencyNameId, coreCompetencyName, coreCompetencyDescription) VALUES ?';
+              connection.query(insertValuesQuery, [predefinedValues.map((value) => [value.coreCompetencyNameId, value.coreCompetencyName, value.coreCompetencyDescription])], (insertErr, insertResult) => {
                 if (insertErr) {
                   console.error('Error inserting predefined values into coreCompetencyName_table:', insertErr);
                   reject(insertErr);
@@ -331,13 +332,15 @@ const coreCompetencyNameTableCreation = () => {
 const coreCompetenciesTableCreation = () => {
   return new Promise((resolve, reject) => {
     const coreCompetenciesTableCreateQuery = `CREATE TABLE IF NOT EXISTS coreCompetencies_table (
-      competencyId  VARCHAR(50) PRIMARY KEY NOT NULL,
+      coreCompetenciesId  VARCHAR(50) PRIMARY KEY NOT NULL,
       userId VARCHAR(50) NOT NULL,
+      coreCompetencyNameId  VARCHAR(50)  NOT NULL,
       coreCompetencyNameId  VARCHAR(50)  NOT NULL,
       description TEXT,
       importance TEXT,
       defensibility TEXT,
       klocInput TEXT,
+      FOREIGN KEY (coreCompetencyNameId) REFERENCES coreCompetencyName_table(coreCompetencyNameId),
       FOREIGN KEY (coreCompetencyNameId) REFERENCES coreCompetencyName_table(coreCompetencyNameId),
       FOREIGN KEY (userId) REFERENCES user_table(userId)
       )`

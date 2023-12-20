@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs")
 const sendMail = require('./../middleware/mail')
 const registerTemplate = require('./../templates/registerTemplate')
 const mysql = require('mysql2');
+const adminData = require('./../utils/adminData')
 
 //  Create a connection
 const connection = mysql.createPool({
@@ -290,7 +291,7 @@ const coreCompetencyNameTableCreation = () => {
 
         // Add predefined values if they don't already exist
         const checkQuery = 'SELECT COUNT(*) AS count FROM coreCompetencyName_table WHERE coreCompetencyNameId IN (?)';
-        const predefinedIds = ['coreCompetencyName_0001','coreCompetencyName_0002','coreCompetencyName_0003','coreCompetencyName_0004'];
+        const predefinedIds = ['coreCompetencyName_0001', 'coreCompetencyName_0002', 'coreCompetencyName_0003', 'coreCompetencyName_0004'];
 
         connection.query(checkQuery, [predefinedIds], (checkErr, checkResult) => {
           if (checkErr) {
@@ -329,19 +330,16 @@ const coreCompetencyNameTableCreation = () => {
   });
 };
 
-
 const coreCompetenciesTableCreation = () => {
   return new Promise((resolve, reject) => {
     const coreCompetenciesTableCreateQuery = `CREATE TABLE IF NOT EXISTS coreCompetencies_table (
       coreCompetenciesId  VARCHAR(50) PRIMARY KEY NOT NULL,
       userId VARCHAR(50) NOT NULL,
       coreCompetencyNameId  VARCHAR(50)  NOT NULL,
-      coreCompetencyNameId  VARCHAR(50)  NOT NULL,
       description TEXT,
       importance TEXT,
       defensibility TEXT,
       klocInput TEXT,
-      FOREIGN KEY (coreCompetencyNameId) REFERENCES coreCompetencyName_table(coreCompetencyNameId),
       FOREIGN KEY (coreCompetencyNameId) REFERENCES coreCompetencyName_table(coreCompetencyNameId),
       FOREIGN KEY (userId) REFERENCES user_table(userId)
       )`
@@ -365,35 +363,33 @@ const createAdminData = () => {
       throw err;
     }
     else if (response.length === 0) {
-      const userData = {
-        userId: 'user_0001',
-        userName: "Santosh",
-        userEmail: "santosh.283143@gmail.com",
-        userPassword: await bcrypt.hash('Santosh1437$', 10),
-        userRole: 'admin',
-        userMobileNo: "8660822483",
-        userAltMobileNo: "",
-        userCompany: "klocTechnologies",
-        userCountry: "India",
-        userAddress: "Bangalore",
-        userDesignation: "Developer",
-        userDepartment: "Frontend",
-        userWebsiteUrl: "www.google.com",
-        userSocialMediaUrl: "www.facebook.com",
-        userFinalCommit: false
-      }
-      connection.query('INSERT INTO user_table SET ?', userData, (err, response) => {
+
+      const hashedAdminData = await Promise.all(adminData.map(async (user) => {
+        const hashedPassword = await bcrypt.hash(user.userPassword, 10);
+        return { ...user, userPassword: hashedPassword };
+      }));
+
+      const values = hashedAdminData.map(user => Object.values(user));
+      const columns = Object.keys(hashedAdminData[0]);
+
+      const placeholders = values.map(() => `(${columns.map(() => '?').join(', ')})`).join(', ');
+
+      const query = `INSERT INTO user_table (${columns.join(', ')}) VALUES ${placeholders}`;
+
+      connection.query(query, values.flat(), (err, response) => {
         if (err) {
           // Handle error during database creation
           console.error('Error creating adminData:', err);
-        }
-        else {
-          const subject = 'Confirmation of registration with KLOC-SWP'
-          const template = registerTemplate(userData.userName, userData.userEmail, 'Santosh1437$')
-          sendMail(userData.userEmail, subject, template)
+        } else {
+          const subject = 'Confirmation of registration with KLOC-SWP';
+          adminData.forEach(user => {
+            const template = registerTemplate(user.userName, user.userEmail, user.userPassword,);
+            sendMail(user.userEmail, subject, template)
+          })
           console.log('admin data created successfully!');
         }
-      })
+      });
+
     }
   })
 }

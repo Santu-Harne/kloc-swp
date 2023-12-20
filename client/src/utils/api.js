@@ -1,7 +1,9 @@
 import axios from 'axios'
 
 // Create an Axios instance
-const api = axios.create();
+const api = axios.create({
+  baseURL: 'http://localhost:7000'
+});
 
 // Request interceptor to add the JWT token to the Authorization header
 api.interceptors.request.use(

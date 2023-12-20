@@ -6,7 +6,7 @@ import { getAllUsers, createUser, updateUser, deleteUser } from '../actions/user
 
 const AllUsers = () => {
   const dispatch = useDispatch();
-  const { users } = useSelector(state => state.data)
+  const { users } = useSelector(state => state?.data)
 
   // const addUser = () => {
   //   dispatch(createUser(data))
@@ -35,7 +35,6 @@ const AllUsers = () => {
   useEffect(() => {
     dispatch(getAllUsers())
   }, [])
-  console.log(users)
   return (
     <div>
       <h1>Users Data</h1>

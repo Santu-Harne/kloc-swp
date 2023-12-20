@@ -30,10 +30,11 @@ const Login = () => {
     await dispatch(login(formValue))
       .then(res => {
         if (res.payload) {
-          // console.log(res.payload);
+          console.log(res.payload);
           toast.success(res.payload.msg)
-          navigate('/all_users')
+          localStorage.setItem('users',JSON.stringify(res.payload.user))
           localStorage.setItem('authToken', res.payload.authToken)
+          navigate('/all_users')
         }
       })
     setTimeout(() => setSubmitBtn(false), [2000])
@@ -43,6 +44,7 @@ const Login = () => {
     setFormValue({ ...formValue, [name]: value });
   };
 
+  console.log()
   return (
     <div
     style={{

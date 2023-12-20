@@ -25,7 +25,7 @@ const competitiveAnalysisController={
                     let count = 0;
                     for (let i = 0; i < competitiveAnalysisData.length; i++) {
                         try {
-                            const { competitiveName, companyProfile, keyCompetitiveAdvantage, targetMarket, marketingStrategy, productPricing, productsAndServices, strengths, weaknesses, opportunities, threats,klocInput } = competitiveAnalysisData[i];
+                            const { competitiveName, companyProfile, keyCompetitiveAdvantage, targetMarket, marketingStrategy, productPricing, productsAndServices, strengths, weaknesses, opportunities, threats} = competitiveAnalysisData[i];
                             const cRes = await new Promise((resolve, reject) => {
                                 db.query(`SELECT * FROM competitiveAnalysis_table WHERE competitiveName=? AND userId=?`, [competitiveName,userId], (cErr, cRes) => {
                                     if (cErr) {
@@ -43,8 +43,8 @@ const competitiveAnalysisController={
                             }
                             const query = `
                             INSERT INTO competitiveAnalysis_table 
-                            (competitiveAnalysisId, userId, competitiveName, companyProfile, keyCompetitiveAdvantage, targetMarket, marketingStrategy, productPricing, productsAndServices, strengths, weaknesses, opportunities, threats,klocInput)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+                            (competitiveAnalysisId, userId, competitiveName, companyProfile, keyCompetitiveAdvantage, targetMarket, marketingStrategy, productPricing, productsAndServices, strengths, weaknesses, opportunities, threats)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                             ON DUPLICATE KEY UPDATE
                               companyProfile = VALUES(companyProfile),
                               keyCompetitiveAdvantage = VALUES(keyCompetitiveAdvantage),
@@ -55,9 +55,8 @@ const competitiveAnalysisController={
                               strengths = VALUES(strengths),
                               weaknesses = VALUES(weaknesses),
                               opportunities = VALUES(opportunities),
-                              threats = VALUES(threats),
-                              klocInput=VALUES(klocInput)`;
-                            const values = [newId, userId, competitiveName, companyProfile, keyCompetitiveAdvantage, targetMarket, marketingStrategy, productPricing, productsAndServices, strengths, weaknesses, opportunities, threats,klocInput];
+                              threats = VALUES(threats)`;
+                            const values = [newId, userId, competitiveName, companyProfile, keyCompetitiveAdvantage, targetMarket, marketingStrategy, productPricing, productsAndServices, strengths, weaknesses, opportunities, threats];
                             const response = await new Promise((resolve, reject) => {
                             db.query(query, values, (err, response) => {
                                 if (err) {

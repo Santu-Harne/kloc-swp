@@ -26,7 +26,7 @@ connection.getConnection(async (err, connection) => {
       // Create all tables
       await createAllTables()
 
-      //Create admin data
+      // Create admin data
       createAdminData()
 
     } else {

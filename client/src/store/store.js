@@ -4,7 +4,7 @@ import sectionReducer from '../reducer/sectionReducer';
 import competitiveAnalysisReducer from '../reducer/competitiveAnalysisReducer';
 const myReducer = {
   data: userReducer,
-  section: sectionReducer,,
+  section: sectionReducer,
   competitiveAnalysisData:competitiveAnalysisReducer
 }
 

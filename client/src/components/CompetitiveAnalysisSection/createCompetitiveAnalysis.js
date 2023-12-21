@@ -72,7 +72,7 @@ const initialData=[
 ]
 function CreateCompetitiveAnalysis() {
     const [competitiveAnalysisData,setCompetitiveAnalysisData]=useState(initialData)
-    const userId=(JSON.parse(localStorage.getItem('users'))).userId
+    const userId=(JSON.parse(localStorage.getItem('users')))?.userId
     const dispatch = useDispatch();
     const { competitiveAnalysis } = useSelector(state => state.data)
     const [tableData, setTableData] = useState([

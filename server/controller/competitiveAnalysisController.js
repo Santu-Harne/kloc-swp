@@ -2,23 +2,25 @@ const assert = require('assert')
 const { StatusCodes } = require('http-status-codes')
 const db = require('../db/database')
 const idGenerator = require('../utils/idGenerator')
+const {selectUserIdQuery,selectCompetitiveAnalysisQuery,insertCompetitiveAnalysisQuery,selectUserIdFromCompetitiveAnalysis,selectAllFromCompetitiveAnalysisAndUserTables,selectCompetitiveAnalysisId,selectCompetitiveAnalysisFromCompetitiveAnalysisAndUserTables,updateCompetitiveAnalysis,deleteCompetitiveAnalysis}=require('../utils/competitiveAnalysisQueries')
+const {internalServerErrorMsg,userNotFoundMsg,requestBodyMsg,createdSuccessfullyMsg,getAllDataSuccessfullyMsg,competitiveAnalysisNotFoundMsg,getDataSuccessfullyMsg,updatedDataSuccessfullyMsg,deletedDataSuccessfullyMsg}=require('../utils/competitiveAnalysisMessages')
 
 const competitiveAnalysisController={
     createCompetitiveAnalysis:async(req,res)=>{
         try{
             const userId=req.params.userId
             const competitiveAnalysisData = req.body
-            db.query(`SELECT userId FROM user_table WHERE userId=?`,userId,async(clientErr,clientResp)=>{
+            db.query(selectUserIdQuery,userId,async(clientErr,clientResp)=>{
                 if (clientErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: internalServerErrorMsg });
                     return;
                 }
                 if (clientResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Client Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: userNotFoundMsg });
                     return;
                 }
                 if (!competitiveAnalysisData || competitiveAnalysisData.length === 0 || Object.keys(competitiveAnalysisData).length===0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Request body must contain at least one competitive analysis data.' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: requestBodyMsg });
                     return;
                 }else{
                     let errCount=0
@@ -27,7 +29,7 @@ const competitiveAnalysisController={
                         try {
                             const { competitiveName, companyProfile, keyCompetitiveAdvantage, targetMarket, marketingStrategy, productPricing, productsAndServices, strengths, weaknesses, opportunities, threats} = competitiveAnalysisData[i];
                             const cRes = await new Promise((resolve, reject) => {
-                                db.query(`SELECT * FROM competitiveAnalysis_table WHERE competitiveName=? AND userId=?`, [competitiveName,userId], (cErr, cRes) => {
+                                db.query(selectCompetitiveAnalysisQuery, [competitiveName,userId], (cErr, cRes) => {
                                     if (cErr) {
                                         reject(cErr);
                                     } else {
@@ -41,21 +43,7 @@ const competitiveAnalysisController={
                             } else {
                                 newId = cRes[0].competitiveAnalysisId;
                             }
-                            const query = `
-                            INSERT INTO competitiveAnalysis_table 
-                            (competitiveAnalysisId, userId, competitiveName, companyProfile, keyCompetitiveAdvantage, targetMarket, marketingStrategy, productPricing, productsAndServices, strengths, weaknesses, opportunities, threats)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                            ON DUPLICATE KEY UPDATE
-                              companyProfile = VALUES(companyProfile),
-                              keyCompetitiveAdvantage = VALUES(keyCompetitiveAdvantage),
-                              targetMarket = VALUES(targetMarket),
-                              marketingStrategy = VALUES(marketingStrategy),
-                              productPricing = VALUES(productPricing),
-                              productsAndServices = VALUES(productsAndServices),
-                              strengths = VALUES(strengths),
-                              weaknesses = VALUES(weaknesses),
-                              opportunities = VALUES(opportunities),
-                              threats = VALUES(threats)`;
+                            const query = insertCompetitiveAnalysisQuery
                             const values = [newId, userId, competitiveName, companyProfile, keyCompetitiveAdvantage, targetMarket, marketingStrategy, productPricing, productsAndServices, strengths, weaknesses, opportunities, threats];
                             const response = await new Promise((resolve, reject) => {
                             db.query(query, values, (err, response) => {
@@ -74,34 +62,30 @@ const competitiveAnalysisController={
                         }
                     }
                     if (count===competitiveAnalysisData.length){
-                        return res.status(StatusCodes.OK).json({ msg: 'Competitive Analysis Data Created Successfully', data: competitiveAnalysisData });
+                        return res.status(StatusCodes.OK).json({ msg: createdSuccessfullyMsg, data: competitiveAnalysisData });
                     }else{
-                       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: "Internal Server Error" });
+                       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: internalServerErrorMsg });
                     }
             }
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:internalServerErrorMsg})
             return 
         }       
     },
     getAllCompetitiveAnalysis:async(req,res)=>{
         try{
             const userId = req.params.userId
-            db.query(`SELECT userId FROM competitiveAnalysis_table WHERE userId=?`,userId,async(userErr,userResp)=>{
+            db.query(selectUserIdQuery,userId,async(userErr,userResp)=>{
                 if (userErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: internalServerErrorMsg });
                     return;
                 }
                 if (userResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Client Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: userNotFoundMsg });
                     return;
                 }
-                    const query=`SELECT * 
-                    FROM competitiveAnalysis_table
-                    JOIN user_table ON user_table.userId=competitiveAnalysis_table.userId
-                    WHERE competitiveAnalysis_table.userId = ? 
-                    ORDER BY competitiveAnalysis_table.competitiveAnalysisId`
+                    const query=selectAllFromCompetitiveAnalysisAndUserTables
                     db.query(query, [userId],async(err,compRes)=>{
                         if (err){
                             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:finalErr});
@@ -141,12 +125,12 @@ const competitiveAnalysisController={
                             }         
                             arr.push(data)
                         }
-                        res.status(StatusCodes.OK).json({msg:'All Competitive Analysis Data Retrieved Succesfully',data:arr})
+                        res.status(StatusCodes.OK).json({msg:getAllDataSuccessfullyMsg,data:arr})
                         return
                     })
                 })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:internalServerErrorMsg})
             return
         } 
     },
@@ -154,31 +138,26 @@ const competitiveAnalysisController={
         try{
             const userId = req.params.userId;
             const competitiveAnalysisId = req.params.competitiveAnalysisId;
-            db.query(`SELECT userId FROM competitiveAnalysis_table WHERE userId=?`,userId,async(userErr,userResp)=>{
+            db.query(selectUserIdFromCompetitiveAnalysis,userId,async(userErr,userResp)=>{
                 if (userErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: internalServerErrorMsg });
                     return;
                 }
                 if (userResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Client Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: userNotFoundMsg });
                     return;
                 }
-                db.query(`SELECT competitiveAnalysisId FROM competitiveAnalysis_table WHERE userId=? AND competitiveAnalysisId=?`,[userId,competitiveAnalysisId],async(compErr,compResp)=>{
+                db.query(selectCompetitiveAnalysisId,[userId,competitiveAnalysisId],async(compErr,compResp)=>{
                     if (compErr) {
-                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: internalServerErrorMsg });
                         return;
                     }
     
                     if (compResp.length === 0) {
-                        res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Competitive Analysis Not Found' });
+                        res.status(StatusCodes.BAD_REQUEST).json({ msg: competitiveAnalysisNotFoundMsg });
                         return;
                     }
-                    const query = `
-                        SELECT * 
-                        FROM competitiveAnalysis_table
-                        JOIN user_table ON user_table.userId=competitiveAnalysis_table.userId
-                        WHERE competitiveAnalysis_table.userId = ? 
-                        AND competitiveAnalysis_table.competitiveAnalysisId = ?`;
+                    const query =selectCompetitiveAnalysisFromCompetitiveAnalysisAndUserTables
                     db.query(query, [userId, competitiveAnalysisId], async (err, compRes) => {
                         if (err){
                             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:finalErr});
@@ -214,13 +193,13 @@ const competitiveAnalysisController={
                                 userFinalCommit:compRes[0]?.userFinalCommit
                             }
                         } 
-                        res.status(StatusCodes.OK).json({msg:'Competitive Analysis Data Retrieved Successfully',data:data})
+                        res.status(StatusCodes.OK).json({msg:getDataSuccessfullyMsg,data:data})
                         return
                     })
                 })
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:internalServerErrorMsg})
             return 
         }
     },
@@ -230,45 +209,45 @@ const competitiveAnalysisController={
             const competitiveAnalysisId = req.params.competitiveAnalysisId;
             const updatedBody=req.body
             const isUpdatedBodyEmpty=Object.keys(updatedBody).length === 0;
-            db.query(`SELECT userId FROM competitiveAnalysis_table WHERE userId=?`,userId,async(userErr,userResp)=>{
+            db.query(selectUserIdFromCompetitiveAnalysis,userId,async(userErr,userResp)=>{
                 if (userErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: internalServerErrorMsg});
                     return;
                 }
                 if (userResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Client Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: userNotFoundMsg});
                     return;
                 }
-                db.query(`SELECT competitiveAnalysisId FROM competitiveAnalysis_table WHERE userId=? AND competitiveAnalysisId=?`,[userId,competitiveAnalysisId],async(compErr,compResp)=>{
+                db.query(selectCompetitiveAnalysisId,[userId,competitiveAnalysisId],async(compErr,compResp)=>{
                     if (compErr) {
-                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: internalServerErrorMsg });
                         return;
                     }
     
                     if (compResp.length === 0) {
-                        res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Competitive Analysis Not Found' });
+                        res.status(StatusCodes.BAD_REQUEST).json({ msg: competitiveAnalysisNotFoundMsg });
                         return;
                     }
                     if (isUpdatedBodyEmpty){
-                        res.status(StatusCodes.OK).json({ msg: 'Competitive Analysis data updated successfully', data: updatedBody });
+                        res.status(StatusCodes.OK).json({ msg: updatedDataSuccessfullyMsg, data: updatedBody });
                         return
                     }else{
                         // Both user and competition analysis record exist, proceed with the update
-                        const updateQuery = 'UPDATE competitiveAnalysis_table SET ? WHERE userId=? AND competitiveAnalysisId=?';
+                        const updateQuery = updateCompetitiveAnalysis
                         db.query(updateQuery, [updatedBody, userId, competitiveAnalysisId], async (updateErr, updateCompRes) => {
                             if (updateErr) {
                                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: updateErr });
                                 return;
                             }
 
-                            res.status(StatusCodes.OK).json({ msg: 'Competitive Analysis data updated successfully', data: updatedBody });
+                            res.status(StatusCodes.OK).json({ msg: updatedDataSuccessfullyMsg, data: updatedBody });
                             return
                         });
                     }
                 })
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:internalServerErrorMsg})
             return
         }
     },
@@ -276,41 +255,41 @@ const competitiveAnalysisController={
         try{
             const userId = req.params.userId;
             const competitiveAnalysisId = req.params.competitiveAnalysisId;
-            db.query(`SELECT userId FROM competitiveAnalysis_table WHERE userId=?`,userId,async(userErr,userResp)=>{
+            db.query(selectUserIdFromCompetitiveAnalysis,userId,async(userErr,userResp)=>{
                 if (userErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: internalServerErrorMsg });
                     return;
                 }
                 if (userResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Client Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: userNotFoundMsg });
                     return;
                 }
-                db.query(`SELECT competitiveAnalysisId FROM competitiveAnalysis_table WHERE userId=? AND competitiveAnalysisId=?`,[userId,competitiveAnalysisId],async(compErr,compResp)=>{
+                db.query(selectCompetitiveAnalysisFromCompetitiveAnalysisAndUserTables,[userId,competitiveAnalysisId],async(compErr,compResp)=>{
                     if (compErr) {
-                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: internalServerErrorMsg });
                         return;
                     }
     
                     if (compResp.length === 0) {
-                        res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Competitive Analysis Not Found' });
+                        res.status(StatusCodes.BAD_REQUEST).json({ msg: competitiveAnalysisNotFoundMsg });
                         return;
                     }
 
                     // Both user and competition analysis record exist, proceed with the update
-                    const deleteQuery = 'DELETE FROM competitiveAnalysis_table WHERE userId=? AND competitiveAnalysisId=?';
+                    const deleteQuery = deleteCompetitiveAnalysis
                     db.query(deleteQuery, [userId, competitiveAnalysisId], async (deleteErr, deleteCompRes) => {
                         if (deleteErr) {
                             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: deleteErr });
                             return;
                         }
 
-                        res.status(StatusCodes.OK).json({ msg: 'Competitive Analysis Data Deleted Successfully'})
+                        res.status(StatusCodes.OK).json({ msg: deletedDataSuccessfullyMsg})
                         return
                     });
                 })
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:internalServerErrorMsg})
             return
         }
     }

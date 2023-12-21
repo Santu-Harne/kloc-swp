@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios'
 import { errorHandler } from '../errorHandling/errorHandler';
 import api from '../utils/api';
-const userId=(JSON.parse(localStorage.getItem('users'))).userId
+const userId=(JSON.parse(localStorage.getItem('users')))?.userId
 export const getAllCompetitiveAnalysis=createAsyncThunk(
     `/api/competitiveAnalysis/getAll/`,
     async(userId)=>{

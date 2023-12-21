@@ -1,0 +1,93 @@
+$primary-color:#FF6B35;
+$secondary-color:#285858;
+$font-color:#262A2D;
+$border-color:#010000;
+$gray-color:#D9D9D9;
+$white-color:#FFFFFF;
+$input-border:#7F7F7F;
+$error-color:red;
+@mixin alignment{
+    display: flex;
+    flex-direction: column;
+}
+@mixin height($height){
+    height:$height;
+}
+@mixin width($width){
+    width:$width;
+}
+@mixin fontSize($fontSize){
+    font-size: $fontSize;
+}
+
+@mixin container {
+    display: flex;
+    flex-direction: column;
+  }
+
+/* Add these styles to your CSS file or style section */
+
+/* General styles */
+.competitive-analysis-container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #D9D9D9;
+  }
+  
+  .heading{
+    text-align: center;
+    color: #262A2D;
+    @include fontSize(24px);
+  }
+
+  .table-container {
+    margin-top: 20px;
+    overflow-x: auto;
+  }
+  .table{
+    width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  }
+  .tableHead,
+.tableBody{
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+  color: #262A2D;
+}
+.tableHead{
+  position: sticky;
+  top: 0;
+  background-color: white; /* Set your desired background color */
+  z-index: 2; /* Set a z-index value higher than the rest of the table */
+}
+.tableBody{
+  overflow-y: scroll;
+}
+
+.tableCellFixed {
+  position: sticky;
+  left: 0;
+  background-color: white; /* Set your desired background color */
+  z-index: 1; /* Set a z-index value lower than the top headers */
+}
+.tableCell{
+    border: 1px solid #ddd;
+    @include fontSize(12px);
+    font-weight: bold;
+}
+  .save-btn {
+    background-color: #FF6B35;
+    color: #fff;
+    width:80px;
+    height:40px;
+    border: none;
+    border-radius: 4px;
+    margin-top: 20px;
+    cursor: pointer;
+  }
+  
+

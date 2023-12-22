@@ -21,7 +21,7 @@ const user = {
 const Login = () => {
   const [formValue, setFormValue] = useState(user);
   const [SubmitBtn, setSubmitBtn] = useState(false)
-  const{email,password}  = formValue
+  const { email, password } = formValue
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const submitHandler = async (e) => {
@@ -30,10 +30,11 @@ const Login = () => {
     await dispatch(login(formValue))
       .then(res => {
         if (res.payload) {
-          // console.log(res.payload);
+          console.log(res.payload);
           toast.success(res.payload.msg)
-          navigate('/all_users')
+          localStorage.setItem('users',JSON.stringify(res.payload.user))
           localStorage.setItem('authToken', res.payload.authToken)
+          navigate('/all_users')
         }
       })
     setTimeout(() => setSubmitBtn(false), [2000])
@@ -43,62 +44,63 @@ const Login = () => {
     setFormValue({ ...formValue, [name]: value });
   };
 
+  console.log()
   return (
     <div
-    style={{
-      margin: "auto",
-      padding: "15px",
-      maxWidth: "450px",
-      alignContent: "center",
-      marginTop: "120px",
-    }}
-  >
-    <MDBCard alignment="center">
-      <MDBIcon fas icon="user-circle" className="fa-2x" />
-      <h5>Sign In</h5>
-      <MDBCardBody>
-        <MDBValidation onSubmit={submitHandler} noValidate className="row g-3">
-          <div className="col-md-12">
-            <MDBInput
-              label="Email"
-              type="email"
-              value={email}
-              name="email"
-              onChange={onInputChange}
-              required
-              invalid
-              validation="Please provide your email"
-            />
-          </div>
-          <div className="col-md-12">
-            <MDBInput
-              label="Password"
-              type="password"
-              value={password}
-              name="password"
-              onChange={onInputChange}
-              required
-              invalid
-              validation="Please provide your password"
-            />
-          </div>
-          <div className="col-12">
-            <MDBBtn style={{ width: "100%" }} className="mt-2">
-             
-              Login
-            </MDBBtn>
-          </div>
-        </MDBValidation>
-        <br />
-        
-      </MDBCardBody>
-      <MDBCardFooter>
-        <Link to="/register">
-          <p>Don't have an account ? Sign Up</p>
-        </Link>
-      </MDBCardFooter>
-    </MDBCard>
-  </div>
+      style={{
+        margin: "auto",
+        padding: "15px",
+        maxWidth: "450px",
+        alignContent: "center",
+        marginTop: "120px",
+      }}
+    >
+      <MDBCard alignment="center">
+        <MDBIcon fas icon="user-circle" className="fa-2x" />
+        <h5>Sign In</h5>
+        <MDBCardBody>
+          <MDBValidation onSubmit={submitHandler} noValidate className="row g-3">
+            <div className="col-md-12">
+              <MDBInput
+                label="Email"
+                type="email"
+                value={email}
+                name="email"
+                onChange={onInputChange}
+                required
+                invalid
+                validation="Please provide your email"
+              />
+            </div>
+            <div className="col-md-12">
+              <MDBInput
+                label="Password"
+                type="password"
+                value={password}
+                name="password"
+                onChange={onInputChange}
+                required
+                invalid
+                validation="Please provide your password"
+              />
+            </div>
+            <div className="col-12">
+              <MDBBtn style={{ width: "100%" }} className="mt-2">
+
+                Login
+              </MDBBtn>
+            </div>
+          </MDBValidation>
+          <br />
+
+        </MDBCardBody>
+        <MDBCardFooter>
+          <Link to="/register">
+            <p>Don't have an account ? Sign Up</p>
+          </Link>
+        </MDBCardFooter>
+      </MDBCard>
+    </div>
   )
 }
 

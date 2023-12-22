@@ -66,7 +66,7 @@
         }
       }
     },
-    "/api/user/create_user": {
+    "/api/user/create": {
       "post": {
         "description": "",
         "parameters": [
@@ -90,13 +90,13 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
     },
-    "/api/user/update_user/{userId}": {
+    "/api/user/update/{userId}": {
       "put": {
         "description": "",
         "parameters": [
@@ -126,7 +126,7 @@
         }
       }
     },
-    "/api/user/delete_user/{userId}": {
+    "/api/user/delete/{userId}": {
       "delete": {
         "description": "",
         "parameters": [
@@ -348,7 +348,7 @@
         }
       }
     },
-    "/api/competitionAnalysis/create/{userId}": {
+    "/api/competitiveAnalysis/create/{userId}": {
       "post": {
         "description": "",
         "parameters": [
@@ -366,7 +366,7 @@
         }
       }
     },
-    "/api/competitionAnalysis/getAll/{userId}": {
+    "/api/competitiveAnalysis/getAll/{userId}": {
       "get": {
         "description": "",
         "parameters": [
@@ -384,7 +384,7 @@
         }
       }
     },
-    "/api/competitionAnalysis/get/{userId}/{competitionAnalysisId}": {
+    "/api/competitiveAnalysis/get/{userId}/{competitiveAnalysisId}": {
       "get": {
         "description": "",
         "parameters": [
@@ -395,7 +395,7 @@
             "type": "string"
           },
           {
-            "name": "competitionAnalysisId",
+            "name": "competitiveAnalysisId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -408,7 +408,7 @@
         }
       }
     },
-    "/api/competitionAnalysis/update/{userId}/{competitionAnalysisId}": {
+    "/api/competitiveAnalysis/update/{userId}/{competitiveAnalysisId}": {
       "put": {
         "description": "",
         "parameters": [
@@ -419,7 +419,7 @@
             "type": "string"
           },
           {
-            "name": "competitionAnalysisId",
+            "name": "competitiveAnalysisId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -432,7 +432,7 @@
         }
       }
     },
-    "/api/competitionAnalysis/delete/{userId}/{competitionAnalysisId}": {
+    "/api/competitiveAnalysis/delete/{userId}/{competitiveAnalysisId}": {
       "delete": {
         "description": "",
         "parameters": [
@@ -443,7 +443,7 @@
             "type": "string"
           },
           {
-            "name": "competitionAnalysisId",
+            "name": "competitiveAnalysisId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -456,7 +456,7 @@
         }
       }
     },
-    "/api/corecompentencyname/create": {
+    "/api/coreCompetencyName/create": {
       "post": {
         "description": "",
         "responses": {
@@ -466,7 +466,7 @@
         }
       }
     },
-    "/api/corecompetencyname/getAll": {
+    "/api/coreCompetencyName/getAll": {
       "get": {
         "description": "",
         "responses": {
@@ -476,12 +476,12 @@
         }
       }
     },
-    "/api/corecompetencyname/get/{corecompetencyId}": {
+    "/api/coreCompetencyName/get/{coreCompetencyNameId}": {
       "get": {
         "description": "",
         "parameters": [
           {
-            "name": "corecompetencyId",
+            "name": "coreCompetencyNameId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -494,12 +494,12 @@
         }
       }
     },
-    "/api/corecompetencyname/update/{corecompetencyId}": {
+    "/api/coreCompetencyName/update/{coreCompetencyNameId}": {
       "put": {
         "description": "",
         "parameters": [
           {
-            "name": "corecompetencyId",
+            "name": "coreCompetencyNameId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -512,12 +512,12 @@
         }
       }
     },
-    "/api/corecompetencyname/delete/{corecompetencyId}": {
+    "/api/coreCompetencyName/delete/{coreCompetencyNameId}": {
       "delete": {
         "description": "",
         "parameters": [
           {
-            "name": "corecompetencyId",
+            "name": "coreCompetencyNameId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -530,7 +530,139 @@
         }
       }
     },
-    "/api/corecompetencies/create/{userId}/{corecompetencyId}": {
+    "/api/coreCompetencies/create/{userId}/": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/coreCompetencies/getAll/{userId}/": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/coreCompetencies/get/{userId}/{coreCompetencyNameId}/": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "coreCompetencyNameId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/coreCompetencies/update/{userId}/{coreCompetencyNameId}": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "coreCompetencyNameId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/coreCompetencies/delete/{userId}/{coreCompetencyNameId}": {
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "coreCompetencyNameId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/clientreponse/getAll/{userId}/{questionId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/clientresponse/create/{userId}/{questionId}": {
       "post": {
         "description": "",
         "parameters": [
@@ -541,7 +673,7 @@
             "type": "string"
           },
           {
-            "name": "corecompetencyId",
+            "name": "questionId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -554,78 +686,24 @@
         }
       }
     },
-    "/api/corecompetencies/getAll/{userId}/{corecompetencyId}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "corecompetencyId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/corecompetencies/get/{userId}/{corecompetencyId}/{competencyId}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "corecompetencyId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "competencyId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/corecompetencies/update/{userId}/{corecompetencyId}/{competencyId}": {
+    "/api/clientresponse/{updateuserId}/{questionId}/{clientresponseId}": {
       "put": {
         "description": "",
         "parameters": [
           {
-            "name": "userId",
+            "name": "updateuserId",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
-            "name": "corecompetencyId",
+            "name": "questionId",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
-            "name": "competencyId",
+            "name": "clientresponseId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -638,7 +716,7 @@
         }
       }
     },
-    "/api/corecompetencies/delete/{userId}/{corecompetencyId}/{competencyId}": {
+    "/api/clientresponse/delete/{userId}/{questionId}/{clientresponseId}": {
       "delete": {
         "description": "",
         "parameters": [
@@ -649,13 +727,13 @@
             "type": "string"
           },
           {
-            "name": "corecompetencyId",
+            "name": "questionId",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
-            "name": "competencyId",
+            "name": "clientresponseId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -668,109 +746,24 @@
         }
       }
     },
-    "/api/get_allclientreponses": {
+    "/api/clientresponse/get/{userId}/{questionId}/{clientresponseId}": {
       "get": {
         "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/create_clientresponse": {
-      "post": {
-        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "questionID": {
-                  "example": "any"
-                },
-                "userID": {
-                  "example": "any"
-                },
-                "clientInput": {
-                  "example": "any"
-                },
-                "comments": {
-                  "example": "any"
-                },
-                "klocinput": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/update_clientresponse/{clientresponseID}": {
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "clientresponseID",
+            "name": "userId",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "questionID": {
-                  "example": "any"
-                },
-                "userID": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/delete_clientresponse/{clientresponseID}": {
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "clientresponseID",
+            "name": "questionId",
             "in": "path",
             "required": true,
             "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/get_clientresponse/{clientresponseID}": {
-      "get": {
-        "description": "",
-        "parameters": [
+          },
           {
-            "name": "clientresponseID",
+            "name": "clientresponseId",
             "in": "path",
             "required": true,
             "type": "string"

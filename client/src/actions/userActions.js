@@ -28,10 +28,10 @@ export const getAllUsers = createAsyncThunk(
 )
 
 export const createUser = createAsyncThunk(
-  '/api/user/create_user',
+  '/api/user/create',
   async (userData) => {
     try {
-      const result = await api.post('/api/user/create_user', userData)
+      const result = await api.post('/api/user/create', userData)
       return result.data
     } catch (error) {
       errorHandler(error)
@@ -40,10 +40,10 @@ export const createUser = createAsyncThunk(
 )
 
 export const updateUser = createAsyncThunk(
-  '/api/user/update_user',
+  '/api/user/update',
   async (data) => {
     try {
-      const result = await api.put(`/api/user/update_user/${data.userId}`, data.updateData)
+      const result = await api.put(`/api/user/update/${data.userId}`, data.updateData)
       return result.data
     } catch (error) {
       errorHandler(error)
@@ -52,10 +52,10 @@ export const updateUser = createAsyncThunk(
 )
 
 export const deleteUser = createAsyncThunk(
-  '/api/user/delete_user',
+  '/api/user/delete',
   async (userId) => {
     try {
-      const result = await api.delete(`/api/user/delete_user/${userId}`)
+      const result = await api.delete(`/api/user/delete/${userId}`)
       return result.data
     } catch (error) {
       errorHandler(error)

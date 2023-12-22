@@ -258,113 +258,106 @@ const clientResponseController = {
 
 
 
-  updateClientResponse: async (req, res) => {
-    try {
-      const reqBody = req.body;
-      const clientResponseID = req.params.clientResponseId; // Assuming the clientresponseID is in the route params
+  // updateClientResponse: async (req, res) => {
+  //   try {
+  //     const reqBody = req.body;
+  //     const clientResponseID = req.params.clientResponseId; // Assuming the clientresponseID is in the route params
 
-      // Check if the client response with the provided ID exists
-      db.query('SELECT * FROM clientresponse_table WHERE clientResponseID = ?', clientResponseID, (err, clientResponse) => {
-        if (err) {
-          throw new Error(err.message);
-        } else if (clientResponse.length === 0) {
-          return res.status(StatusCodes.NOT_FOUND).json({ msg: 'No client response found with provided clientresponseID!' });
-        } else {
-          // Ensure that the provided questionId is a valid foreign key
-          db.query('SELECT * FROM question_table WHERE questionId = ?', [reqBody.questionId], (err, questionResponse) => {
-            if (err) {
-              throw new Error(err.message);
-            } else if (questionResponse.length === 0) {
-              return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Invalid questionId. Question not found.' });
-            } else {
-              // Ensure that the provided userId is a valid foreign key
-              db.query('SELECT * FROM user_table WHERE userId = ?', [reqBody.userId], (err, userResponse) => {
-                if (err) {
-                  throw new Error(err.message);
-                } else if (userResponse.length === 0) {
-                  return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Invalid userId. User not found.' });
-                } else {
-                  // Update the client response in the clientresponse_table
-                  const updateQuery = 'UPDATE clientresponse_table SET ? WHERE clientresponseID = ?';
-                  db.query(updateQuery, [reqBody, clientResponseId], (err, updateResponse) => {
-                    if (err) {
-                      throw new Error(err.message);
-                    } else {
-                      // Retrieve the updated client response data
-                      db.query('SELECT * FROM clientresponse_table WHERE clientResponseID = ?', clientResponseID, (err, updatedClientResponse) => {
-                        if (err) {
-                          throw new Error(err.message);
-                        }
+  //     // Check if the client response with the provided ID exists
+  //     db.query('SELECT * FROM clientresponse_table WHERE clientResponseID = ?', clientResponseID, (err, clientResponse) => {
+  //       if (err) {
+  //         throw new Error(err.message);
+  //       } else if (clientResponse.length === 0) {
+  //         return res.status(StatusCodes.NOT_FOUND).json({ msg: 'No client response found with provided clientresponseID!' });
+  //       } else {
+  //         // Ensure that the provided questionId is a valid foreign key
+  //         db.query('SELECT * FROM question_table WHERE questionId = ?', [reqBody.questionId], (err, questionResponse) => {
+  //           if (err) {
+  //             throw new Error(err.message);
+  //           } else if (questionResponse.length === 0) {
+  //             return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Invalid questionId. Question not found.' });
+  //           } else {
+  //             // Ensure that the provided userId is a valid foreign key
+  //             db.query('SELECT * FROM user_table WHERE userId = ?', [reqBody.userId], (err, userResponse) => {
+  //               if (err) {
+  //                 throw new Error(err.message);
+  //               } else if (userResponse.length === 0) {
+  //                 return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Invalid userId. User not found.' });
+  //               } else {
+  //                 // Update the client response in the clientresponse_table
+  //                 const updateQuery = 'UPDATE clientresponse_table SET ? WHERE clientresponseID = ?';
+  //                 db.query(updateQuery, [reqBody, clientResponseId], (err, updateResponse) => {
+  //                   if (err) {
+  //                     throw new Error(err.message);
+  //                   } else {
+  //                     // Retrieve the updated client response data
+  //                     db.query('SELECT * FROM clientresponse_table WHERE clientResponseID = ?', clientResponseID, (err, updatedClientResponse) => {
+  //                       if (err) {
+  //                         throw new Error(err.message);
+  //                       }
 
-                        return res.status(StatusCodes.OK).json({
-                          msg: 'Client response data updated successfully',
-                          data: updatedClientResponse[0],
-                        });
-                      });
-                    }
-                  });
-                }
-              });
-            }
-          });
-        }
-      });
-    } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+  //                       return res.status(StatusCodes.OK).json({
+  //                         msg: 'Client response data updated successfully',
+  //                         data: updatedClientResponse[0],
+  //                       });
+  //                     }
+  //                   });
+  //                 }
+  //               });
+  //             }
+  //           });
+  //         }
+  //       });
+  //     } catch (error) {
+  //       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+  //     }
+  //   },
+    deleteClientResponse: async (req, res) => {
+      try {
+        const clientresponseID = req.params.clientresponseID; // Assuming the clientresponseID is in the route params
+    
+        // Check if the client response with the provided ID exists
+        db.query('SELECT * FROM clientresponse_table WHERE clientresponseID = ?', clientresponseID, (err, clientResponse) => {
+          if (err) {
+            throw new Error(err.message);
+          } else if (clientResponse.length === 0) {
+            return res.status(StatusCodes.NOT_FOUND).json({ msg: 'No client response found with provided clientresponseID!' });
+          } else {
+            // Delete the client response from the clientresponse_table
+            const deleteQuery = 'DELETE FROM clientresponse_table WHERE clientresponseID = ?';
+            db.query(deleteQuery, clientresponseID, (err, deleteResponse) => {
+              if (err) {
+                throw new Error(err.message);
+              }
+    
+              return res.status(StatusCodes.OK).json({ msg: 'Client response deleted successfully' });
+            });
+          }
+        });
+      } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+      }
+    },
+    getClientResponse: async (req, res) => {
+      try {
+        const clientresponseID = req.params.clientresponseID; // Assuming the clientresponseID is in the route params
+    
+        // Query the clientresponse_table by clientresponseID
+        db.query('SELECT * FROM clientresponse_table WHERE clientresponseID = ?', clientresponseID, (err, response) => {
+          if (err) {
+            throw new Error(err.message);
+          }
+    
+          if (response.length === 0) {
+            return res.status(StatusCodes.NOT_FOUND).json({ msg: 'No client response found with provided clientresponseID!' });
+          } else {
+            const clientresponse = response[0];
+            return res.status(StatusCodes.OK).json({ msg: 'Client response retrieved successfully', data: clientresponse });
+          }
+        });
+      } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+      }
     }
-  },
-
-  deleteClientResponse: async (req, res) => {
-    try {
-      const clientresponseID = req.params.clientresponseID; // Assuming the clientresponseID is in the route params
-
-      // Check if the client response with the provided ID exists
-      db.query('SELECT * FROM clientresponse_table WHERE clientresponseID = ?', clientresponseID, (err, clientResponse) => {
-        if (err) {
-          throw new Error(err.message);
-        } else if (clientResponse.length === 0) {
-          return res.status(StatusCodes.NOT_FOUND).json({ msg: 'No client response found with provided clientresponseID!' });
-        } else {
-          // Delete the client response from the clientresponse_table
-          const deleteQuery = 'DELETE FROM clientresponse_table WHERE clientresponseID = ?';
-          db.query(deleteQuery, clientresponseID, (err, deleteResponse) => {
-            if (err) {
-              throw new Error(err.message);
-            }
-
-            return res.status(StatusCodes.OK).json({ msg: 'Client response deleted successfully' });
-          });
-        }
-      });
-    } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
-    }
-  },
-
-  getClientResponse: async (req, res) => {
-    try {
-      const clientresponseID = req.params.clientresponseID; // Assuming the clientresponseID is in the route params
-
-      // Query the clientresponse_table by clientresponseID
-      db.query('SELECT * FROM clientresponse_table WHERE clientresponseID = ?', clientresponseID, (err, response) => {
-        if (err) {
-          throw new Error(err.message);
-        }
-
-        if (response.length === 0) {
-          return res.status(StatusCodes.NOT_FOUND).json({ msg: 'No client response found with provided clientresponseID!' });
-        } else {
-          const clientresponse = response[0];
-          return res.status(StatusCodes.OK).json({ msg: 'Client response retrieved successfully', data: clientresponse });
-        }
-      });
-    } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
-    }
-  }
-
-
-
-
 }
 module.exports = clientResponseController

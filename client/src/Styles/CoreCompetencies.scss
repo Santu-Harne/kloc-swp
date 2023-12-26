@@ -1,0 +1,19 @@
+.competency-mapping-container {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 20px;
+  }
+  .table-container{
+    overflow-x: auto;
+  }
+  .vro-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .vro-table th, .vro-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  

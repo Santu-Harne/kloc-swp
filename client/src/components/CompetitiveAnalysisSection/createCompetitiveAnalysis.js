@@ -49,6 +49,7 @@ const initialData = [
 ];
 
 function CreateCompetitiveAnalysis() {
+    const [initialDataa,setInitialDataa]=useState(initialData)
     const [competitiveAnalysisData,setCompetitiveAnalysisData]=useState(initialData)
     const userId=(JSON.parse(localStorage.getItem('users'))).userId
     const userRole=(JSON.parse(localStorage.getItem('users'))).userRole
@@ -89,9 +90,9 @@ function CreateCompetitiveAnalysis() {
           const competitiveItem = competitiveAnalysis.find((cItem) => cItem.competitiveName === item.competitiveName);
           return competitiveItem ? { ...item, ...competitiveItem } : item;
         });
+        console.log(updatedInitialData)
         setCompetitiveAnalysisData(updatedInitialData);
-      }else{
-        setCompetitiveAnalysisData(competitiveAnalysisData)
+        setInitialDataa(JSON.parse(JSON.stringify(updatedInitialData)))
       }
     }, [competitiveAnalysis]);
     const keyMapping = {
@@ -116,25 +117,49 @@ function CreateCompetitiveAnalysis() {
 
       // Update the specific cell with the changed value
       updatedData[rowIndex][dataKey] = value;
-
       // Update the state with the modified data
-      setCompetitiveAnalysisData(updatedData);
+      setCompetitiveAnalysisData(updatedData)
     };
-    const handleSaveResponses = async () => {
-      const modifiedCompetitiveAnalysisData=competitiveAnalysisData.filter((item)=>{
-        return Object.keys(item).filter((key)=>key!=='competitiveName').some((key)=>item[key]!=='')
-      })
-      
-      try {
-        const res = await dispatch(createCompetitiveAnalysis(modifiedCompetitiveAnalysisData));
-        
-        if (res.payload) {
-          setCompetitiveAnalysisData(competitiveAnalysisData)
-          toast.success(res.payload.msg);
+    function deepEqual(obj1, obj2) {
+      if (obj1 === obj2) {
+        return true;
+      }
+    
+      if (typeof obj1 !== 'object' || obj1 === null || typeof obj2 !== 'object' || obj2 === null) {
+        return false;
+      }
+    
+      const keys1 = Object.keys(obj1);
+      const keys2 = Object.keys(obj2);
+    
+      if (keys1.length !== keys2.length) {
+        return false;
+      }
+    
+      for (const key of keys1) {
+        if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
+          return false;
         }
-      } catch (error) {
-        // Handle any errors during dispatch
-        console.error("Error during dispatch:", error);
+      }
+    
+      return true;
+    }
+    const handleSaveResponses = async () => {
+      console.log(initialDataa)
+      console.log(competitiveAnalysisData)
+      const differences = competitiveAnalysisData.filter((item, index) => !deepEqual(item, initialDataa[index]));
+      if (differences.length>0){
+        try {
+          const res = await dispatch(createCompetitiveAnalysis(differences));
+          
+          if (res.payload) {
+            setCompetitiveAnalysisData(competitiveAnalysisData)
+            toast.success(res.payload.msg);
+          }
+        } catch (error) {
+          // Handle any errors during dispatch
+          console.error("Error during dispatch:", error);
+        }
       }
     };
     

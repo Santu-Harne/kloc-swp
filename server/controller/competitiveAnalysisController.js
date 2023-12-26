@@ -19,10 +19,10 @@ const competitiveAnalysisController={
                     res.status(StatusCodes.BAD_REQUEST).json({ msg: userNotFoundMsg });
                     return;
                 }
-                if (!competitiveAnalysisData || competitiveAnalysisData.length === 0 || Object.keys(competitiveAnalysisData).length===0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: requestBodyMsg });
-                    return;
-                }else{
+                // if (!competitiveAnalysisData || competitiveAnalysisData.length === 0 || Object.keys(competitiveAnalysisData).length===0) {
+                //     res.status(StatusCodes.O);
+                //     return;
+                // }else{
                     let errCount=0
                     let count = 0;
                     for (let i = 0; i < competitiveAnalysisData.length; i++) {
@@ -66,7 +66,6 @@ const competitiveAnalysisController={
                     }else{
                        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: internalServerErrorMsg });
                     }
-            }
             })
         }catch(err){
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:internalServerErrorMsg})

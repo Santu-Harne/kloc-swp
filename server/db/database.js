@@ -323,7 +323,7 @@ const coreCompetenciesTableCreation = () => {
       coreCompetencyNameId  VARCHAR(50)  NOT NULL,
       description TEXT,
       importance TEXT,
-      defensibility TEXT,
+      defensability TEXT,
       klocInput TEXT,
       FOREIGN KEY (coreCompetencyNameId) REFERENCES coreCompetencyName_table(coreCompetencyNameId),
       FOREIGN KEY (userId) REFERENCES user_table(userId)

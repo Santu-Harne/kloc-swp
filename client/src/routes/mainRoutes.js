@@ -5,6 +5,7 @@ import userRoutes from './userRoutes'
 import competitiveAnalysisRoutes from '../routes/competitiveAnalysisRoutes'
 import Register from '../components/Register';
 import ForgotPassword from '../components/ForgotPassword';
+import coreCompetencyRoutes from '../routes/coreCompetencyRoutes'
 
 const routes = (
   <>
@@ -14,6 +15,7 @@ const routes = (
     <Route exact path='/register' element={<Register />} />
     {userRoutes}
     {competitiveAnalysisRoutes}
+    {coreCompetencyRoutes}
     {/* <Route exact element={<ProtectedRoute />}>
     </Route> */}
   </>

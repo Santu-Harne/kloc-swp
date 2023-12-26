@@ -10,7 +10,7 @@ import clientresponseReducer from '../reducer/clientresponseReducer';
   data: userReducer,
   section: sectionReducer,
   competitiveAnalysisData:competitiveAnalysisReducer,
-  coreCompetenciesData:coreCompetenciesReducer,,
+  coreCompetenciesData:coreCompetenciesReducer,
  executiveSummery :executiveSummary,
  clientresponse:clientresponseReducer
 }

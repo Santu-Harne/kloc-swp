@@ -2,79 +2,59 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
 import {getAllCompetitiveAnalysis,createCompetitiveAnalysis} from '../../actions/competitiveAnalysisActions'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,TextField } from '@mui/material';
-const initialData=[
+import TableContainer from '@mui/material/TableContainer';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableHead from '@mui/material/TableHead';
+// import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import TableBody from '@mui/material/TableBody';
+import { TextField } from "@mui/material";
+// import '../../styles/CompetitiveAnalysis.scss'
+const headerFields = [
+  "competitiveName",
+  "companyProfile",
+  "keyCompetitiveAdvantage",
+  "targetMarket",
+  "marketingStrategy",
+  "productsAndServices",
+  "productPricing",
+  "strengths",
+  "weaknesses",
+  "opportunities",
+  "threats"
+];
+
+const initialData = [
   {
-    "competitiveName":"Your Business",
-    "companyProfile":"",
-    "keyCompetitiveAdvantage":"",
-    "targetMarket":"",
-    "marketingStrategy":"",
-    "productsAndServices":"",
-    "productPricing":"",
-    "strengths":"",
-    "weaknesses":"",
-    "opportuntities":"",
-    "threats":""
+    competitiveName: "Your Business",
+    ...Object.fromEntries(headerFields.slice(1).map((field) => [field, ""])),
   },
   {
-    "competitiveName":"Competition 1",
-    "companyProfile":"",
-    "keyCompetitiveAdvantage":"",
-    "targetMarket":"",
-    "marketingStrategy":"",
-    "productsAndServices":"",
-    "productPricing":"",
-    "strengths":"",
-    "weaknesses":"",
-    "opportuntities":"",
-    "threats":""
+    competitiveName: "Competition 1",
+    ...Object.fromEntries(headerFields.slice(1).map((field) => [field, ""])),
   },
   {
-    "competitiveName":"Competition 2",
-    "companyProfile":"",
-    "keyCompetitiveAdvantage":"",
-    "targetMarket":"",
-    "marketingStrategy":"",
-    "productsAndServices":"",
-    "productPricing":"",
-    "strengths":"",
-    "weaknesses":"",
-    "opportuntities":"",
-    "threats":""
+    competitiveName: "Competition 2",
+    ...Object.fromEntries(headerFields.slice(1).map((field) => [field, ""])),
   },
   {
-    "competitiveName":"Competition 3",
-    "companyProfile":"",
-    "keyCompetitiveAdvantage":"",
-    "targetMarket":"",
-    "marketingStrategy":"",
-    "productsAndServices":"",
-    "productPricing":"",
-    "strengths":"",
-    "weaknesses":"",
-    "opportuntities":"",
-    "threats":""
+    competitiveName: "Competition 3",
+    ...Object.fromEntries(headerFields.slice(1).map((field) => [field, ""])),
   },
   {
-    "competitiveName":"Kloc Input",
-    "companyProfile":"",
-    "keyCompetitiveAdvantage":"",
-    "targetMarket":"",
-    "marketingStrategy":"",
-    "productsAndServices":"",
-    "productPricing":"",
-    "strengths":"",
-    "weaknesses":"",
-    "opportuntities":"",
-    "threats":""
-  }
-]
+    competitiveName: "Kloc Input",
+    ...Object.fromEntries(headerFields.slice(1).map((field) => [field, ""])),
+  },
+];
+
 function CreateCompetitiveAnalysis() {
     const [competitiveAnalysisData,setCompetitiveAnalysisData]=useState(initialData)
-    const userId=(JSON.parse(localStorage.getItem('users')))?.userId
+    const userId=(JSON.parse(localStorage.getItem('users'))).userId
+    const userRole=(JSON.parse(localStorage.getItem('users'))).userRole
     const dispatch = useDispatch();
-    const { competitiveAnalysis } = useSelector(state => state.data)
+    const { competitiveAnalysis } = useSelector(state => state.competitiveAnalysisData)
     const [tableData, setTableData] = useState([
         {
           leftHeader1: 'Company Profile',
@@ -111,6 +91,8 @@ function CreateCompetitiveAnalysis() {
           return competitiveItem ? { ...item, ...competitiveItem } : item;
         });
         setCompetitiveAnalysisData(updatedInitialData);
+      }else{
+        setCompetitiveAnalysisData(competitiveAnalysisData)
       }
     }, [competitiveAnalysis]);
     const keyMapping = {
@@ -139,141 +121,155 @@ function CreateCompetitiveAnalysis() {
       // Update the state with the modified data
       setCompetitiveAnalysisData(updatedData);
     };
-    const handleSaveResponses=async()=>{
-      await dispatch(createCompetitiveAnalysis(competitiveAnalysisData))
-      .then((res)=>{
-        if (res.payload){
-          toast.success(res.payload.msg)
-          window.location.reload()
-        }
+    const handleSaveResponses = async () => {
+      const modifiedCompetitiveAnalysisData=competitiveAnalysisData.filter((item)=>{
+        return Object.keys(item).filter((key)=>key!=='competitiveName').some((key)=>item[key]!=='')
       })
-    }
-    console.log(competitiveAnalysisData)
+      
+      try {
+        const res = await dispatch(createCompetitiveAnalysis(modifiedCompetitiveAnalysisData));
+        
+        if (res.payload) {
+          setCompetitiveAnalysisData(competitiveAnalysisData)
+          toast.success(res.payload.msg);
+        }
+      } catch (error) {
+        // Handle any errors during dispatch
+        console.error("Error during dispatch:", error);
+      }
+    };
+    
   return (
     <div className="competitive-analysis-container">
-        <h1>COMPETITIVE ANALYSIS</h1>
-        <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell />
-            {topHeaders.map((header) => (
-              <TableCell key={header}>{header}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-        {tableData.map((row, rowIndex) => (
-            <React.Fragment key={rowIndex}>
-              {Object.keys(row).length <4 ? (
-                <React.Fragment>
-                  <TableRow>
-                    <TableCell>{row.leftHeader1}</TableCell>
-                    <TableCell rowSpan={2}>{row.rightHeader}</TableCell>
-                    {/* Empty cells for top headers */}
-                    {topHeaders.map((header, headerIndex) => (
-                      <TableCell key={headerIndex}>
-                      {/* Use TextField for editable cells */}
-                      <TextField
-                        sx={{'& input': {color:'#262A2D',fontWeight: '600',border:'none' // Set the font weight for the label
-                            },
-                          }}
-                        value={competitiveAnalysisData[headerIndex][keyMapping[row.leftHeader1]]}
-                        onChange={(e) => handleTextFieldChange(e.target.value, row.leftHeader1, header)}
-                      />
-                    </TableCell>
-                    ))}
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{row.leftHeader2}</TableCell>
-                    {/* Empty cells for top headers */}
-                    {topHeaders.map((header, headerIndex) => (
-                      <TableCell key={headerIndex}>
-                      {/* Use TextField for editable cells */}
-                      <TextField
-                        sx={{'& input': {color:'#262A2D',fontWeight: '600',border:'none' // Set the font weight for the label
-                            },
-                          }}
-                        value={competitiveAnalysisData[headerIndex][keyMapping[row.leftHeader2]]}
-                        onChange={(e) => handleTextFieldChange(e.target.value, row.leftHeader2, header)}
-                      />
-                    </TableCell>
-                    ))}
-                  </TableRow>
+        <h1 className="heading">COMPETITIVE ANALYSIS</h1>
+        <TableContainer component={Paper} className="table-container">
+          <Table className="table">
+            <TableHead className="tableHead ">
+              <TableRow >
+                <TableCell className="tableCell  tableHeadFixed"/>
+                <TableCell className="tableCell  tableHeadFixed"/>
+                {topHeaders.map((header) => (
+                  <TableCell className="tableCell  tableHeadFixed" key={header}>{header}</TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody className="tableBody">
+            {tableData.map((row, rowIndex) => (
+                <React.Fragment key={rowIndex}>
+                  {Object.keys(row).length <4 ? (
+                    <React.Fragment>
+                      <TableRow>
+                        <TableCell className="tableCell">{row.leftHeader1}</TableCell>
+                        <TableCell className="tableCell" rowSpan={2}>{row.rightHeader}</TableCell>
+                        {/* Empty cells for top headers */}
+                        {topHeaders.map((header, headerIndex) => (
+                          <TableCell className="tableCell" key={headerIndex}>
+                          {/* Use TextField for editable cells */}
+                          <TextField
+                            sx={{'& input': {color:'#262A2D',fontWeight: '600',border:'none',width:'200px',// Set the font weight for the label
+                                },
+                              }}
+                            value={competitiveAnalysisData[headerIndex][keyMapping[row.leftHeader1]]}
+                            onChange={(e) => handleTextFieldChange(e.target.value, row.leftHeader1, header)}
+                            disabled={(userRole === "client" && header === "Kloc Input") || (userRole === "admin" && header !== "Kloc Input")}
+                          />
+                        </TableCell>
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="tableCell">{row.leftHeader2}</TableCell>
+                        {/* Empty cells for top headers */}
+                        {topHeaders.map((header, headerIndex) => (
+                          <TableCell className="tableCell" key={headerIndex}>
+                          {/* Use TextField for editable cells */}
+                          <TextField
+                            sx={{'& input': {color:'#262A2D',fontWeight: '600',border:'none',width:'200px' // Set the font weight for the label
+                                },
+                              }}
+                            value={competitiveAnalysisData[headerIndex][keyMapping[row.leftHeader2]]}
+                            onChange={(e) => handleTextFieldChange(e.target.value, row.leftHeader2, header)}
+                            disabled={(userRole === "client" && header === "Kloc Input") || (userRole === "admin" && header !== "Kloc Input")}
+                          />
+                        </TableCell>
+                        ))}
+                      </TableRow>
+                    </React.Fragment>
+                  ) : (
+                    <React.Fragment>
+                      <TableRow>
+                        <TableCell className="tableCell">{row.leftHeader1}</TableCell>
+                        <TableCell className="tableCell" rowSpan={4}>{row.rightHeader}</TableCell>
+                        {topHeaders.map((header, headerIndex) => (
+                          <TableCell className="tableCell" key={headerIndex}>
+                          {/* Use TextField for editable cells */}
+                          <TextField
+                            sx={{'& input': {color:'#262A2D',fontWeight: '600',border:'none',width:'200px' // Set the font weight for the label
+                                },
+                              }}
+                            value={competitiveAnalysisData[headerIndex][keyMapping[row.leftHeader1]]}
+                            onChange={(e) => handleTextFieldChange(e.target.value, row.leftHeader1, header)}
+                            disabled={(userRole === "client" && header === "Kloc Input") || (userRole === "admin" && header !== "Kloc Input")}
+                          />
+                        </TableCell >
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="tableCell">{row.leftHeader2}</TableCell>
+                        {topHeaders.map((header, headerIndex) => (
+                          <TableCell className="tableCell" key={headerIndex}>
+                          {/* Use TextField for editable cells */}
+                          <TextField
+                            sx={{'& input': {color:'#262A2D',fontWeight: '600',border:'none',width:'200px' // Set the font weight for the label
+                                },
+                              }}
+                            value={competitiveAnalysisData[headerIndex][keyMapping[row.leftHeader2]]}
+                            onChange={(e) => handleTextFieldChange(e.target.value, row.leftHeader2, header)}
+                            disabled={(userRole === "client" && header === "Kloc Input") || (userRole === "admin" && header !== "Kloc Input")}
+                          />
+                        </TableCell>
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="tableCell">{row.leftHeader3}</TableCell>
+                        {topHeaders.map((header, headerIndex) => (
+                          <TableCell className="tableCell" key={headerIndex}>
+                          {/* Use TextField for editable cells */}
+                          <TextField
+                            sx={{'& input': {color:'#262A2D',fontWeight: '600',border:'none',width:'200px' // Set the font weight for the label
+                                },
+                              }}
+                            value={competitiveAnalysisData[headerIndex][keyMapping[row.leftHeader3]]}
+                            onChange={(e) => handleTextFieldChange(e.target.value, row.leftHeader3, header)}
+                            disabled={(userRole === "client" && header === "Kloc Input") || (userRole === "admin" && header !== "Kloc Input")}
+                          />
+                        </TableCell>
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="tableCell">{row.leftHeader4}</TableCell>
+                        {topHeaders.map((header, headerIndex) => (
+                          <TableCell className="tableCell" key={headerIndex}>
+                          {/* Use TextField for editable cells */}
+                          <TextField
+                            sx={{'& input': {color:'#262A2D',fontWeight: '600',border:'none',width:'200px' // Set the font weight for the label
+                                },
+                              }}
+                            value={competitiveAnalysisData[headerIndex][keyMapping[row.leftHeader4]]}
+                            onChange={(e) => handleTextFieldChange(e.target.value, row.leftHeader4, header)}
+                            disabled={(userRole === "client" && header === "Kloc Input") || (userRole === "admin" && header !== "Kloc Input")}
+                          />
+                        </TableCell>
+                        ))}
+                      </TableRow>
+                    </React.Fragment>
+                  )}
                 </React.Fragment>
-              ) : (
-                <React.Fragment>
-                  <TableRow>
-                    <TableCell>{row.leftHeader1}</TableCell>
-                    <TableCell rowSpan={4}>{row.rightHeader}</TableCell>
-                    {topHeaders.map((header, headerIndex) => (
-                      <TableCell key={headerIndex}>
-                      {/* Use TextField for editable cells */}
-                      <TextField
-                        sx={{'& input': {color:'#262A2D',fontWeight: '600',border:'none' // Set the font weight for the label
-                            },
-                          }}
-                        value={competitiveAnalysisData[headerIndex][keyMapping[row.leftHeader1]]}
-                        onChange={(e) => handleTextFieldChange(e.target.value, row.leftHeader1, header)}
-                      />
-                    </TableCell>
-                    ))}
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{row.leftHeader2}</TableCell>
-                    {topHeaders.map((header, headerIndex) => (
-                      <TableCell key={headerIndex}>
-                      {/* Use TextField for editable cells */}
-                      <TextField
-                        sx={{'& input': {color:'#262A2D',fontWeight: '600',border:'none' // Set the font weight for the label
-                            },
-                          }}
-                        value={competitiveAnalysisData[headerIndex][keyMapping[row.leftHeader2]]}
-                        onChange={(e) => handleTextFieldChange(e.target.value, row.leftHeader2, header)}
-                      />
-                    </TableCell>
-                    ))}
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{row.leftHeader3}</TableCell>
-                    {topHeaders.map((header, headerIndex) => (
-                      <TableCell key={headerIndex}>
-                      {/* Use TextField for editable cells */}
-                      <TextField
-                        sx={{'& input': {color:'#262A2D',fontWeight: '600',border:'none' // Set the font weight for the label
-                            },
-                          }}
-                        value={competitiveAnalysisData[headerIndex][keyMapping[row.leftHeader3]]}
-                        onChange={(e) => handleTextFieldChange(e.target.value, row.leftHeader3, header)}
-                      />
-                    </TableCell>
-                    ))}
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{row.leftHeader4}</TableCell>
-                    {topHeaders.map((header, headerIndex) => (
-                      <TableCell key={headerIndex}>
-                      {/* Use TextField for editable cells */}
-                      <TextField
-                        sx={{'& input': {color:'#262A2D',fontWeight: '600',border:'none' // Set the font weight for the label
-                            },
-                          }}
-                        value={competitiveAnalysisData[headerIndex][keyMapping[row.leftHeader4]]}
-                        onChange={(e) => handleTextFieldChange(e.target.value, row.leftHeader4, header)}
-                      />
-                    </TableCell>
-                    ))}
-                  </TableRow>
-                </React.Fragment>
-              )}
-            </React.Fragment>
-          ))}
-        </TableBody>
-      </Table>
+              ))}
+            </TableBody>
+          </Table>
         </TableContainer>
         <div className="text-center">
-          <button onClick={handleSaveResponses}>Save</button>
+          <button  className='save-btn' onClick={handleSaveResponses}>Save</button>
         </div>
     </div>
   )

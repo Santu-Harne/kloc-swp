@@ -1,9 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './../reducer/userReducer';
 import sectionReducer from '../reducer/sectionReducer';
-const myReducer = {
+import competitiveAnalysisReducer from '../reducer/competitiveAnalysisReducer';
+
+import executiveSummary from '../reducer/executiveSummary';
+import clientresponseReducer from '../reducer/clientresponseReducer';
+ const myReducer = {
   data: userReducer,
   section: sectionReducer,
+  competitiveAnalysisData:competitiveAnalysisReducer,
+ executiveSummery :executiveSummary,
+ clientresponse:clientresponseReducer
 }
 
 export const store = configureStore({

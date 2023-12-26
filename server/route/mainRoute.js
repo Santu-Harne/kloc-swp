@@ -14,7 +14,7 @@ allRoutes.use('/api/user', userRoute)
 allRoutes.use('/api/', questionRoute)
 allRoutes.use('/api/', competitiveAnalysisRoute)
 allRoutes.use('/api/', coreCompetencyRoute)
-allRoutes.use('/api', clientResponseRoute)
+allRoutes.use('/api/clientresponse', clientResponseRoute)
 allRoutes.use('/api/section', sectionRoute)
 
 

@@ -6,11 +6,12 @@ import TableContainer from '@mui/material/TableContainer';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableHead from '@mui/material/TableHead';
+// import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import { TextField } from "@mui/material";
-import '../../styles/CompetitiveAnalysis.scss'
+// import '../../styles/CompetitiveAnalysis.scss'
 const headerFields = [
   "competitiveName",
   "companyProfile",

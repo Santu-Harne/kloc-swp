@@ -8,6 +8,8 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+console.log(store)
 root.render(
   // <React.StrictMode>
   <Provider store={store}>

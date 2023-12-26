@@ -26,7 +26,7 @@ const authController = {
 
         res.status(StatusCodes.OK).json({ msg: "Login Successful!", authToken, user: extUser })
       })
-
+ 
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message })
     }

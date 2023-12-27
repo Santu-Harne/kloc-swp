@@ -6,6 +6,8 @@ import competitiveAnalysisRoutes from '../routes/competitiveAnalysisRoutes'
 import Register from '../components/Register';
 import ForgotPassword from '../components/ForgotPassword';
 import ExecutiveSummaryRoutes from './executivesummery';
+import ConsumerUnderStandingRoutes from './consumerunderstanding';
+import ServiceOfferingRoutes from './serviceoffering';
 
 const routes = (
   <>
@@ -16,6 +18,8 @@ const routes = (
     {userRoutes}
     {competitiveAnalysisRoutes}
     {ExecutiveSummaryRoutes}
+    {ConsumerUnderStandingRoutes}
+    {ServiceOfferingRoutes}
     {/* <Route exact element={<ProtectedRoute />}>
     </Route> */}
   </>

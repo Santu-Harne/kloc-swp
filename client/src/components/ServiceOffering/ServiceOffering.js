@@ -14,12 +14,12 @@ import { TextField } from "@mui/material";
 import { createClientResponse, getAllClientResponses } from "../../actions/clienresponseAction";
 import toast from 'react-hot-toast';
 
-function ExecutiveSummary() {
+function  ServiceOffering() {
   const [selectedQuestionIds, setSelectedQuestionIds] = useState([]);
   const [clientInputValues, setClientInputValues] = useState({});
   const [klocInputValues, setKlocInputValues] = useState({});
 
-  const sectionId = "section_0001";
+  const sectionId = "section_0005";
   const userRole=(JSON.parse(localStorage.getItem('users'))).userRole
 
   const dispatch = useDispatch();
@@ -140,11 +140,11 @@ console.log(questionData)
   
   
 
-  const headers = ["Headers", "Pointers", "Input", "ExampleInput", "klocInput"];
+  const headers = ["Probes", "Input", "ExampleInput", "klocInput"];
 
   return (
     <div className="competitive-analysis-container">
-      <h1 className="heading" style={{textAlign:'center'}}>ExecutiveSummary</h1>
+      <h1 className="heading" style={{textAlign:'center'}}>ServiceOffering</h1>
       <TableContainer component={Paper} className="table-container">
         <Table className="table">
           <TableHead className="tableHead">
@@ -195,16 +195,7 @@ console.log(questionData)
                     borderRight: "1px solid black",
                   }}
                 >
-                  {question.questionText.split(":")[1]}
-                </TableCell>
-                <TableCell
-                  style={{
-                    width: "40px",
-                    borderBottom: "1px solid black",
-                    borderTop: "1px solid black",
-                    borderRight: "1px solid black",
-                  }}
-                >
+                 
                   <TextField
                     value={
                       clientInputValues[questionIds[index]] !== undefined
@@ -264,4 +255,4 @@ console.log(questionData)
   );
 }
 
-export default ExecutiveSummary;
+export default ServiceOffering;

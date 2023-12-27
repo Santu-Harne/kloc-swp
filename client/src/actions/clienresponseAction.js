@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../utils/api';
 import { errorHandler } from '../errorHandling/errorHandler';
+import axios from 'axios';
 const userId=(JSON.parse(localStorage.getItem('users')))?.userId
 
 
@@ -16,13 +17,16 @@ export const getAllClientResponses = createAsyncThunk(
   }
 );
 export const createClientResponse= createAsyncThunk(
-  '/api/clientresponse/create',
-  async (clientresponsedata) => {
+  `/api/clientresponse/create`,
+  async (updatedClientResponseData) => {
     try {
-      const result = await api.create(`/api/clientresponse/create/${userId}`,clientresponsedata);
+      const result = await api.post(`/api/clientresponse/create/${userId}`,updatedClientResponseData);
+      console.log(updatedClientResponseData)
+      console.log(result)
       return result.data.data;
     } catch (error) {
       errorHandler(error);
+      console.log(error)
     }
   }
 );

@@ -20,7 +20,7 @@ const headerFields = [
   "klocInput"
 ];
 function CreateCoreCompetencies() {
-  const [initialDataa, setInitialData] = useState([]);
+    const [initialDataa, setInitialData] = useState([]);
     const [coreCompetenciesData,setCoreCompetenciesData]=useState([])
     const userId=(JSON.parse(localStorage.getItem('users'))).userId
     const userRole=(JSON.parse(localStorage.getItem('users'))).userRole

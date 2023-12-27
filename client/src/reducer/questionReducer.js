@@ -1,16 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { createSelector } from 'reselect';
-import {  getAllQuestions } from '../actions/ExecutiveSummary'
+import {  getAllQuestions } from '../actions/questionActions'
 
-const ExecutiveSummery = createSlice({
-  name: 'ExecutiveSummery',
-  initialState: { sections: [], status: 'idle', error: null },
+const questionReducer = createSlice({
+  name: 'questions',
+  initialState: { questions: [], status: 'idle', error: null },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(getAllQuestions.fulfilled, (state, action) => {
         state.status = 'successful';
-        state.sections = action.payload;
+        state.questions = action.payload;
       })
 
       // .addCase(createSection.fulfilled, (state, action) => {
@@ -54,4 +54,4 @@ export const selectSectionError = createSelector(
   (section) => section.error
 );
 
-export default ExecutiveSummery.reducer;
+export default questionReducer.reducer;

@@ -28,7 +28,7 @@ const predefinedQuestionNames = [
     {
       sectionId: "section_0003",
       questionData:[
-      {questionId:'question_0013',questionText:"[What you do] by [How you do it] for [Who you do it for] to [What value you provide]",questionInputType:",",exampleInput:"To beautify the world with our meticulously crafted fine jewelry and enrich the lives of women."},
+      {questionId:'question_0013',questionText:"How to Craft a Mission Statement@[What you do] by [How you do it] for [Who you do it for] to [What value you provide]",questionInputType:",",exampleInput:"To beautify the world with our meticulously crafted fine jewelry and enrich the lives of women."},
      
     ]
     },

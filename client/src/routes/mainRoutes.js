@@ -7,6 +7,7 @@ import Register from '../components/Register';
 import ForgotPassword from '../components/ForgotPassword';
 import coreCompetencyRoutes from '../routes/coreCompetencyRoutes'
 import ExecutiveSummaryRoutes from './executivesummery';
+import MissionRoutes from './missionRoutes';
 
 const routes = (
   <>
@@ -18,6 +19,7 @@ const routes = (
     {competitiveAnalysisRoutes}
     {coreCompetencyRoutes}
     {ExecutiveSummaryRoutes}
+    {MissionRoutes}
     {/* <Route exact element={<ProtectedRoute />}>
     </Route> */}
   </>

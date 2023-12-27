@@ -6,12 +6,11 @@ import TableContainer from '@mui/material/TableContainer';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableHead from '@mui/material/TableHead';
-// import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import { TextField } from "@mui/material";
-// import '../../styles/CompetitiveAnalysis.scss'
+import '../../styles/CompetitiveAnalysis.scss'
 const headerFields = [
   "competitiveName",
   "companyProfile",
@@ -91,7 +90,7 @@ function CreateCompetitiveAnalysis() {
           const competitiveItem = competitiveAnalysis.find((cItem) => cItem.competitiveName === item.competitiveName);
           return competitiveItem ? { ...item, ...competitiveItem } : item;
         });
-        console.log(updatedInitialData)
+
         setCompetitiveAnalysisData(updatedInitialData);
         setInitialDataa(JSON.parse(JSON.stringify(updatedInitialData)))
       }
@@ -146,16 +145,13 @@ function CreateCompetitiveAnalysis() {
       return true;
     }
     const handleSaveResponses = async () => {
-      console.log(initialDataa)
-      console.log(competitiveAnalysisData)
       const differences = competitiveAnalysisData.filter((item, index) => !deepEqual(item, initialDataa[index]));
       if (differences.length>0){
         try {
           const res = await dispatch(createCompetitiveAnalysis(differences));
-          
           if (res.payload) {
             setCompetitiveAnalysisData(competitiveAnalysisData)
-            toast.success(res.payload.msg);
+            toast.success('Competitive Analysis Data Responses Saved Successfully');
           }
         } catch (error) {
           // Handle any errors during dispatch

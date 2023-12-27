@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
 import {getAllCoreCompetencyNames,getAllCoreCompetencies,createCoreCompetencies} from '../../actions/coreCompetenciesActions'
-import TableContainer from '@mui/material/TableContainer';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import TableBody from '@mui/material/TableBody';
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import TableBody from "@mui/material/TableBody";
+import TableContainer from "@mui/material/TableContainer";
 import { TextField } from "@mui/material";
 import '../../styles/CoreCompetencies.scss'
 
@@ -21,7 +21,6 @@ const headerFields = [
 ];
 function CreateCoreCompetencies() {
   const [initialDataa, setInitialData] = useState([]);
-  const [updatedData,setUpdatedData]=useState([])
     const [coreCompetenciesData,setCoreCompetenciesData]=useState([])
     const userId=(JSON.parse(localStorage.getItem('users'))).userId
     const userRole=(JSON.parse(localStorage.getItem('users'))).userRole
@@ -55,7 +54,7 @@ function CreateCoreCompetencies() {
         return rowData;
       });
       setCoreCompetenciesData(initialData);
-      setInitialData(initialData)
+      setInitialData(JSON.parse(JSON.stringify(initialData)))
     }else{
       const initialData = coreCompetencyNameData.map(row => {
         const rowData = { coreCompetencyNameId: row[0]};
@@ -65,7 +64,7 @@ function CreateCoreCompetencies() {
         return rowData;
       });
       setCoreCompetenciesData(initialData);
-      setInitialData(initialData)
+      setInitialData(JSON.parse(JSON.stringify(initialData)))
     }
   }, [coreCompetencies]);
   let topHeaders=['Competencies','Description','Importance','Defensability','Kloc Input']
@@ -77,73 +76,97 @@ function CreateCoreCompetencies() {
   
     // Update the specific cell with the changed value
     updatedData[rowIndex][header] = value;
-    console.log(value)
   
     // Update the state with the modified data
     setCoreCompetenciesData(updatedData);
   };
+  function deepEqual(obj1, obj2) {
+    if (obj1 === obj2) {
+      return true;
+    }
+  
+    if (typeof obj1 !== 'object' || obj1 === null || typeof obj2 !== 'object' || obj2 === null) {
+      return false;
+    }
+  
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+  
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+  
+    for (const key of keys1) {
+      if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
+        return false;
+      }
+    }
+  
+    return true;
+  }
   const handleSaveResponses = async () => {
-    const isDataModified = JSON.stringify(coreCompetenciesData) !== JSON.stringify(initialDataa);
-    console.log(isDataModified)
-    // const modifiedCoreCompetenciesData=coreCompetenciesData.filter((item)=>{
-    //   return Object.keys(item).filter((key)=>key!=='coreCompetencyNameId').some((key)=>item[key]!=='')
-    // })
-    // console.log(modifiedCoreCompetenciesData)
+    const differences = coreCompetenciesData.filter((item, index) => !deepEqual(item, initialDataa[index]));
     
-    // try {
-    //   const res = await dispatch(createCoreCompetencies(modifiedCoreCompetenciesData));
-      
-    //   if (res.payload) {
-    //     setCoreCompetenciesData(coreCompetenciesData)
-    //     toast.success(res.payload.msg);
-    //   }
-    // } catch (error) {
-    //   // Handle any errors during dispatch
-    //   console.error("Error during dispatch:", error);
-    // }
+    if (differences.length>0){
+      try {
+        const res = await dispatch(createCoreCompetencies(differences));
+        
+        if (res.payload) {
+          setCoreCompetenciesData(coreCompetenciesData)
+          toast.success("Core Competencies Data Responses Saved Successfully");
+        }
+      } catch (error) {
+        // Handle any errors during dispatch
+        console.error("Error during dispatch:", error);
+      }
+    }
   };
   return (
-    <div className="competency-mapping-container">
-      <h2>CORE COMPETENCY & COMPETITIVE ADVANTAGE MAPPING</h2>
-      <p>
-        Core competencies are the defining products, services, skills, and capabilities that give a business advantages over its competitors. They are the competitive advantages that no competitor can reasonably offer or replicate.
-      </p>
-      <ol>
-        <li>Collective learning within the business</li>
-        <li>Ability to integrate skills and technologies</li>
-        <li>Ability to deliver superior products and services</li>
-      </ol>
-      <h3>VRO model: to evaluate if the Core Competencies will offer a long-term competitive advantage:</h3>
-      <div className="table-container">
-        <table className="vro-table">
-          <thead>
-            <tr>
-              <th>Valuable</th>
-              <th>Rare</th>
-              <th>Organisation</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>It has to be of value to the consumer</td>
-              <td>Hard for competition to imitate or would need significant Time/Resource/Money to imitate</td>
-              <td>Company to be organized to implement/leverage it at scale</td>
-            </tr>
-          </tbody>
-        </table>
+    <div className="core-competency-mapping-container">
+      <div >
+        <h2 className='main-heading'>CORE COMPETENCY & COMPETITIVE ADVANTAGE MAPPING</h2>
+        <div className='core-competency-content-container'>
+          <p className='core-competency-matter'>
+            Core competencies are the defining products, services, skills, and capabilities that give a business advantages over its competitors. They are the competitive advantages that no competitor can reasonably offer or replicate.
+          </p>
+          <ol className='list-container'>
+            <li>Collective learning within the business</li>
+            <li>Ability to integrate skills and technologies</li>
+            <li>Ability to deliver superior products and services</li>
+          </ol>
+          <h3 className='side-heading'>VRO model: to evaluate if the Core Competencies will offer a long-term competitive advantage:</h3>
+          <div className="small-table-container">
+            <table className="vro-table">
+              <thead>
+                <tr>
+                  <th>Valuable</th>
+                  <th>Rare</th>
+                  <th>Organisation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>It has to be of value to the consumer</td>
+                  <td>Hard for competition to imitate or would need significant Time/Resource/Money to imitate</td>
+                  <td>Company to be organized to implement/leverage it at scale</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3 className='side-heading'>Steps to evaluate Core Competencies:</h3>
+          <ol className='list-container'>
+            <li>Look at your customers and clients.</li>
+            <li>Turn to your company's mission statement.</li>
+            <li>Discuss your core competencies with your team.</li>
+          </ol>
+        </div>
       </div>
-      <h3>Steps to evaluate Core Competencies:</h3>
-      <ol>
-        <li>Look at your customers and clients.</li>
-        <li>Turn to your company's mission statement.</li>
-        <li>Discuss your core competencies with your team.</li>
-      </ol>
-      <TableContainer component={Paper} className="table-container">
+      <TableContainer component={Paper} >
           <Table className="table">
-            <TableHead className="tableHead ">
+            <TableHead className="tableHead">
               <TableRow >
                 {topHeaders.map((header) => (
-                  <TableCell className="tableCell  tableHeadFixed" key={header}>{header}</TableCell>
+                  <TableCell className="tableCell" key={header}>{header}</TableCell>
                 ))}
               </TableRow>
             </TableHead>
@@ -173,7 +196,7 @@ function CreateCoreCompetencies() {
           </Table>
         </TableContainer>
         <div className="text-center">
-          <button  className='save-btn' onClick={handleSaveResponses}>Save</button>
+          <button className='save-btn' onClick={handleSaveResponses}>Save</button>
         </div>
     </div>
   )

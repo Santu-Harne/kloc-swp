@@ -31,9 +31,6 @@ $error-color:red;
 .competitive-analysis-container {
     margin: 20px;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #D9D9D9;
   }
   
   .heading{
@@ -55,7 +52,6 @@ $error-color:red;
 .tableBody{
   padding: 12px;
   text-align: left;
-  border: 1px solid #ddd;
   color: #262A2D;
 }
 .tableHead{
@@ -75,7 +71,7 @@ $error-color:red;
   z-index: 1; /* Set a z-index value lower than the top headers */
 }
 .tableCell{
-    border: 1px solid #ddd;
+    border: 1px solid $input-border;
     @include fontSize(12px);
     font-weight: bold;
 }

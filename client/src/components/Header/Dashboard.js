@@ -5,7 +5,7 @@ import KlocLogo from '../../assets/images/Kloc-logo.jpg'
 //import logo from "../../../assets/Images/kloc-white-logo.png";
 import Tooltip from "@mui/material/Tooltip";
 //import { GiHamburgerMenu } from "react-icons/gi";
-import "../../Styles/Header.scss";
+import "../../styles/Header.scss";
 
 function Dashboard() {
   const [isPopUpOpen, setIsPopUpOpen] = useState(false); // Mobile menu visibility

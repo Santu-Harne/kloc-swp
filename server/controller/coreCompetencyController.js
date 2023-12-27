@@ -2,18 +2,20 @@ const assert = require('assert')
 const { StatusCodes } = require('http-status-codes')
 const db = require('../db/database')
 const idGenerator = require('../utils/idGenerator')
+const coreCompetenciesQueries=require('../queries/coreCompetencyQueries')
+const coreCompetenciesMessages=require('../messages/coreCompetencyMessages')
 
 const coreCompetencyController={
     createCoreCompentencyName:async(req,res)=>{
         try{
             const reqBody = req.body
             if (!reqBody || !reqBody.hasOwnProperty('coreCompetencyName') || reqBody['coreCompetencyName'].trim()===''){
-                res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Required Fields Are Missing' });
+                res.status(StatusCodes.BAD_REQUEST).json({ msg: coreCompetenciesMessages.requiredFieldsMissingMsg });
                 return;
             }
             // Check if the competencyName already exists
             const existingCompetency = await new Promise((resolve, reject) => {
-            db.query('SELECT * FROM coreCompetencyName_table WHERE coreCompetencyName = ?', [reqBody.coreCompetencyName], (err, results) => {
+            db.query(coreCompetenciesQueries.selectAllFromCoreCompetencyName, [reqBody.coreCompetencyName], (err, results) => {
                 if (err) {
                 reject(err);
                 } else {
@@ -23,66 +25,66 @@ const coreCompetencyController={
             });
 
             if (existingCompetency) {
-            res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Core Competency name already exists' });
+            res.status(StatusCodes.BAD_REQUEST).json({ msg: coreCompetenciesMessages.coreCompetencyNameAlreadyExistsMsg });
             return;
             }
             const newId = await idGenerator('coreCompetencyName', 'coreCompetencyName_table')
             const coreCompetencyNameData = { ...reqBody, coreCompetencyNameId: newId}
-            const query = 'INSERT INTO coreCompetencyName_table SET ?';
+            const query = coreCompetenciesQueries.insertDataIntoCoreCompetencyName
             db.query(query, coreCompetencyNameData, (err, response) => {
                 if (err){
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:finalErr});
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg});
                     return 
                 }
-                res.status(StatusCodes.OK).json({ msg: 'Core Competency Name Data Created Successfully', data: coreCompetencyNameData })
+                res.status(StatusCodes.OK).json({ msg: coreCompetenciesMessages.coreCompetencyNameCreatedSuccessfullyMsg, data: coreCompetencyNameData })
                 return
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg})
             return
         }
     },
     getCoreCompetencyNames:async(req,res)=>{
         try{
-            const query=`SELECT * FROM coreCompetencyName_table`
+            const query=coreCompetenciesQueries.selectAllDataFromCoreCompetencyName
             db.query(query,async(getErr,getRes)=>{
                 if (getErr){
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:getErr});
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg});
                     return 
                 }
-                res.status(StatusCodes.OK).json({msg:'All Core Competency Names Data Retrieved Successfully',data:getRes})
+                res.status(StatusCodes.OK).json({msg:coreCompetenciesMessages.AllCoreCompetencyNamesRetrievedSuccessfullyMsg,data:getRes})
                 return
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg})
             return
         }
     },
     getCoreCompetencyName:async(req,res)=>{
         try{
             const coreCompetencyNameId=req.params.coreCompetencyNameId
-            db.query(`SELECT coreCompetencyNameId FROM coreCompetencyName_table WHERE coreCompetencyNameId=?`,coreCompetencyNameId,async(compErr,compResp)=>{
+            db.query(coreCompetenciesQueries.selectCoreCompetencyNameIdFromCoreCompetencyName,coreCompetencyNameId,async(compErr,compResp)=>{
                 if (compErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg });
                     return;
                 }
 
                 if (compResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Core Competency Name Data Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: coreCompetenciesMessages.coreCompetencyNameNotFoundMsg});
                     return;
                 }
-                const query=`SELECT * FROM coreCompetencyName_table WHERE coreCompetencyNameId=?`
+                const query=coreCompetenciesQueries.selectOneDataFromCoreCompetencyName
                 db.query(query,coreCompetencyNameId,async(getError,getResponse)=>{
                     if (getError){
-                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:getError});
+                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg});
                         return 
                     }
-                    res.status(StatusCodes.OK).json({msg:'Core Competency Name Data Retrieved Successfully',data:getResponse})
+                    res.status(StatusCodes.OK).json({msg:coreCompetenciesMessages.coreCompetencyNameRetrievedSuccessfullyMsg,data:getResponse})
                     return
                 })
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg})
             return
         }
     },
@@ -91,23 +93,23 @@ const coreCompetencyController={
             const coreCompetencyNameId=req.params.coreCompetencyNameId
             const updatedData=req.body
             const isUpdatedBodyEmpty = Object.keys(updatedData).length === 0;
-            db.query(`SELECT coreCompetencyNameId FROM coreCompetencyName_table WHERE coreCompetencyNameId=?`,coreCompetencyNameId,async(compErr,compResp)=>{
+            db.query(coreCompetenciesQueries.selectCoreCompetencyNameIdFromCoreCompetencyName,coreCompetencyNameId,async(compErr,compResp)=>{
                 if (compErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg });
                     return;
                 }
 
                 if (compResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Core Competency Name Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: coreCompetenciesMessages.coreCompetencyNameNotFoundMsg });
                     return;
                 }
                 if (isUpdatedBodyEmpty){
-                    res.status(StatusCodes.OK).json({ msg: 'Core Competency Name Data Updated successfully', data: updatedData });
+                    res.status(StatusCodes.OK).json({ msg: coreCompetenciesMessages.coreCompetencyNameUpdatedSuccessfullyMsg, data: updatedData });
                     return
                 }else{
                     // Check if the competencyName already exists
                     const existingCompetency = await new Promise((resolve, reject) => {
-                        db.query('SELECT * FROM coreCompetencyName_table WHERE coreCompetencyName = ?', [updatedData.coreCompetencyName], (err, results) => {
+                        db.query(coreCompetenciesQueries.selectAllFromCoreCompetencyName, [updatedData.coreCompetencyName], (err, results) => {
                             if (err) {
                             reject(err);
                             } else {
@@ -117,51 +119,51 @@ const coreCompetencyController={
                         });
             
                         if (existingCompetency) {
-                        res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Core Competency name already exists' });
+                        res.status(StatusCodes.BAD_REQUEST).json({ msg: coreCompetenciesMessages.coreCompetencyNameAlreadyExistsMsg});
                         return;
                         }
-                    const query=`UPDATE coreCompetencyName_table SET ? WHERE coreCompetencyNameId=?`
+                    const query=coreCompetenciesQueries.updateCoreCompetencyNameData
                     db.query(query,[updatedData,coreCompetencyNameId],async(updateErr,updateRes)=>{
                         if (updateErr) {
-                            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: updateErr });
+                            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg:coreCompetenciesMessages.internalServerErrorMsg });
                             return;
                         }
 
-                        res.status(StatusCodes.OK).json({ msg: 'Core Competency Name Data Updated successfully', data: updatedData });
+                        res.status(StatusCodes.OK).json({ msg: coreCompetenciesMessages.coreCompetencyNameUpdatedSuccessfullyMsg, data: updatedData });
                         return
                     })
                 }
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg})
             return 
         }
     },
     deleteCoreCompetencyName:async(req,res)=>{
         try{
             const coreCompetencyNameId=req.params.coreCompetencyNameId
-            db.query(`SELECT coreCompetencyNameId FROM coreCompetencyName_table WHERE coreCompetencyNameId=?`,coreCompetencyNameId,async(compErr,compResp)=>{
+            db.query(coreCompetenciesQueries.selectCoreCompetencyNameIdFromCoreCompetencyName,coreCompetencyNameId,async(compErr,compResp)=>{
                 if (compErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg });
                     return;
                 }
 
                 if (compResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Core Competency Name Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: coreCompetenciesMessages.coreCompetencyNameNotFoundMsg });
                     return;
                 }
-                const query=`DELETE FROM coreCompetencyName_table WHERE coreCompetencyNameId=?`
+                const query=coreCompetenciesQueries.deleteCoreCompetencyNameData
                 db.query(query,coreCompetencyNameId,async(deleteErr,deleteRes)=>{
                     if (deleteErr) {
-                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: deleteErr });
+                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg});
                         return;
                     }
-                    res.status(StatusCodes.OK).json({msg:"Core Competency Name Data Deleted Successfully"})
+                    res.status(StatusCodes.OK).json({msg:coreCompetenciesMessages.coreCompetencyNameDeletedSuccessfullyMsg})
                     return
                 })
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg})
             return
         }
     },
@@ -169,26 +171,27 @@ const coreCompetencyController={
         try{
             const userId=req.params.userId
             const coreCompetenciesData=req.body
-            db.query(`SELECT userId FROM user_table WHERE userId=?`,userId,async(userErr,userResp)=>{
+            db.query(coreCompetenciesQueries.selectUserIdFromUser,userId,async(userErr,userResp)=>{
                 if (userErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg });
                     return;
                 }
                 if (userResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Client Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: coreCompetenciesMessages.userNotFoundMsg });
                     return;
                 }
-                if (!coreCompetenciesData || coreCompetenciesData.length === 0 || Object.keys(coreCompetenciesData).length===0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Request body must contain at least one core competencies entry.' });
-                    return;
-                }else{
+                // if (!coreCompetenciesData || coreCompetenciesData.length === 0 || Object.keys(coreCompetenciesData).length===0) {
+                //     res.status(StatusCodes.BAD_REQUEST).json({ msg: requestBodyMsg });
+                //     return;
+                // }else{
+                if (coreCompetenciesData.length>0){
                     let count = 0;
                     let errCount=0
                     for (let i = 0; i < coreCompetenciesData.length; i++) {
                         try {
-                            const { coreCompetencyNameId, description, importance, defensibility, klocInput } = coreCompetenciesData[i];
+                            const { coreCompetencyNameId, description, importance, defensability, klocInput } = coreCompetenciesData[i];
                             const cRes = await new Promise((resolve, reject) => {
-                                db.query(`SELECT * FROM corecompetencies_table WHERE coreCompetencyNameId=? AND userId=?`, [coreCompetencyNameId,userId], (cErr, cRes) => {
+                                db.query(coreCompetenciesQueries.selectAllFromCoreCompetenciesTable, [coreCompetencyNameId,userId], (cErr, cRes) => {
                                     if (cErr) {
                                         reject(cErr);
                                     } else {
@@ -202,16 +205,8 @@ const coreCompetencyController={
                             } else {
                                 newId = cRes[0].coreCompetenciesId;
                             }
-                            const query = `
-                                INSERT INTO coreCompetencies_table (coreCompetenciesId, userId, coreCompetencyNameId, description, importance, defensibility, klocInput)
-                                VALUES (?, ?, ?, ?, ?, ?, ?)
-                                ON DUPLICATE KEY UPDATE
-                                    description = VALUES(description),
-                                    importance = VALUES(importance),
-                                    defensibility = VALUES(defensibility),
-                                    klocInput = VALUES(klocInput);
-                                `;
-                            const values = [newId, userId, coreCompetencyNameId, description, importance, defensibility, klocInput];
+                            const query =coreCompetenciesQueries.insertDataIntoCoreCompetenciesTable
+                            const values = [newId, userId, coreCompetencyNameId, description, importance, defensability, klocInput];
                             const response = await new Promise((resolve, reject) => {
                             db.query(query, values, (err, response) => {
                                 if (err) {
@@ -229,39 +224,33 @@ const coreCompetencyController={
                         }
                     }
                     if (count===coreCompetenciesData.length){
-                        return res.status(StatusCodes.OK).json({ msg: 'Core Competencies Data Created Successfully', data: coreCompetenciesData });
+                        return res.status(StatusCodes.OK).json({ msg: coreCompetenciesMessages.coreCompetenciesDataCreatedSuccessfullyMsg, data: coreCompetenciesData });
                     }else{
-                       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: "Internal Server Error" });
+                       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg });
                     }
-                }   
+                }
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg})
             return
         }
     },
     getAllCoreCompetencies:async(req,res)=>{
         try{
             const userId=req.params.userId
-            db.query(`SELECT userId FROM coreCompetencies_table WHERE userId=?`,userId,async(userErr,userResp)=>{
+            db.query(coreCompetenciesQueries.selectUserIdFromUser,userId,async(userErr,userResp)=>{
                 if (userErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg });
                     return;
                 }
                 if (userResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Client Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: coreCompetenciesMessages.userNotFoundMsg });
                     return;
                 }
-                const query = `
-                    SELECT * 
-                    FROM coreCompetencies_table
-                    JOIN user_table ON user_table.userId=coreCompetencies_table.userId
-                    JOIN coreCompetencyName_table ON coreCompetencyName_table.coreCompetencyNameId=coreCompetencies_table.coreCompetencyNameId
-                    WHERE coreCompetencies_table.userId = ? 
-                    ORDER BY coreCompetencies_table.coreCompetenciesId`;
+                const query = coreCompetenciesQueries.selectAllCoreCompetenciesData
                     db.query(query, [userId], async (err, compRes) => {
                         if (err){
-                            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:err});
+                            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg});
                             return 
                         }
                         let arr=[]
@@ -296,12 +285,12 @@ const coreCompetencyController={
                             }         
                             arr.push(data)
                         }
-                        res.status(StatusCodes.OK).json({msg:'All Core Competencies Data Retrieved Successfully',data:arr})
+                        res.status(StatusCodes.OK).json({msg:coreCompetenciesMessages.allCoreCompetenciesDataRetrievedSuccessfullyMsg,data:arr})
                         return
                     })
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg})
             return
         }
     },
@@ -309,34 +298,28 @@ const coreCompetencyController={
         try{
             const userId=req.params.userId
             const coreCompetencyNameId=req.params.coreCompetencyNameId
-            db.query(`SELECT userId FROM coreCompetencies_table WHERE userId=?`,userId,async(userErr,userResp)=>{
+            db.query(coreCompetenciesQueries.selectUserIdFromUser,userId,async(userErr,userResp)=>{
                 if (userErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg });
                     return;
                 }
                 if (userResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Client Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: coreCompetenciesMessages.userNotFoundMsg});
                     return;
                 }
-                db.query(`SELECT coreCompetencyNameId FROM coreCompetencies_table WHERE coreCompetencyNameId=?`,coreCompetencyNameId,async(coreErr,coreRes)=>{
+                db.query(coreCompetenciesQueries.selectCoreCompetencyNameIdFromCoreCompetenciesTable,coreCompetencyNameId,async(coreErr,coreRes)=>{
                     if (coreErr){
-                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg});
                         return;
                     }
                     if (coreRes.length===0){
-                        res.status(StatusCodes.BAD_REQUEST).json({msg:'Core Competencies Data Not Found'})
+                        res.status(StatusCodes.BAD_REQUEST).json({msg:coreCompetenciesMessages.coreCompetenciesDataNotFoundMsg})
                         return;
                     }
-                    const query = `
-                    SELECT * 
-                    FROM coreCompetencies_table
-                    JOIN user_table ON user_table.userId=coreCompetencies_table.userId
-                    JOIN coreCompetencyName_table ON coreCompetencyName_table.coreCompetencyNameId=coreCompetencies_table.coreCompetencyNameId
-                    WHERE coreCompetencies_table.userId = ? 
-                    AND coreCompetencies_table.coreCompetencyNameId = ?`
+                    const query =coreCompetenciesQueries.selectOneCoreCompetenciesData
                     db.query(query,[userId,coreCompetencyNameId],async(finalErr,finalRes)=>{
                         if (finalErr){
-                            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:finalErr});
+                            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg});
                             return  
                         }
                         const data={
@@ -367,13 +350,13 @@ const coreCompetencyController={
                                 userFinalCommit:finalRes[0]?.userFinalCommit
                             }
                         }   
-                        res.status(StatusCodes.OK).json({msg:'Core Competencies Data Retrieved Successfully',data:data})    
+                        res.status(StatusCodes.OK).json({msg:coreCompetenciesMessages.coreCompetenciesDataRetrievedSuccessfullyMsg,data:data})    
                         return
                     })
                 })
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg})
             return
         }
     },
@@ -383,42 +366,42 @@ const coreCompetencyController={
             const coreCompetencyNameId=req.params.coreCompetencyNameId
             const updatedBody=req.body
             const isUpdatedBodyEmpty = Object.keys(updatedBody).length === 0;
-            db.query(`SELECT userId FROM coreCompetencies_table WHERE userId=?`,userId,async(userErr,userResp)=>{
+            db.query(coreCompetenciesQueries.selectUserIdFromUser,userId,async(userErr,userResp)=>{
                 if (userErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg });
                     return;
                 }
                 if (userResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Client Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: coreCompetenciesMessages.userNotFoundMsg });
                     return;
                 }
-                db.query(`SELECT coreCompetencyNameId FROM coreCompetencies_table WHERE coreCompetencyNameId=?`,coreCompetencyNameId,async(coreErr,coreRes)=>{
+                db.query(coreCompetenciesQueries.selectCoreCompetencyNameIdFromCoreCompetenciesTable,coreCompetencyNameId,async(coreErr,coreRes)=>{
                     if (coreErr){
-                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg });
                         return;
                     }
                     if (coreRes.length===0){
-                        res.status(StatusCodes.BAD_REQUEST).json({msg:'Core Competency Name Not Found'})
+                        res.status(StatusCodes.BAD_REQUEST).json({msg:coreCompetenciesMessages.coreCompetencyNameNotFoundMsg})
                         return;
                     }
                     if (isUpdatedBodyEmpty){
-                        res.status(StatusCodes.OK).json({msg:'Core Competencies Data Updated Successfully',data:updatedBody})
+                        res.status(StatusCodes.OK).json({msg:coreCompetenciesMessages.coreCompetenciesDataUpdatedSuccessfullyMsg,data:updatedBody})
                         return 
                     }else{
-                        const updateQuery=`UPDATE coreCompetencies_table SET ? WHERE userId=? AND coreCompetencyNameId=?`
+                        const updateQuery=coreCompetenciesQueries.updateCoreCompetenciesData
                         db.query(updateQuery,[updatedBody,userId,coreCompetencyNameId],async(finalErr,finalRes)=>{
                             if (finalErr){
-                                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:finalErr})
+                                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg})
                                 return
                             }
-                            res.status(StatusCodes.OK).json({msg:'Core Competencies Data Updated Successfully',data:updatedBody})
+                            res.status(StatusCodes.OK).json({msg:coreCompetenciesMessages.coreCompetenciesDataUpdatedSuccessfullyMsg,data:updatedBody})
                             return 
                         })
                     }
                 })
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg})
             return
         }
     },
@@ -426,37 +409,37 @@ const coreCompetencyController={
         try{
             const userId=req.params.userId
             const coreCompetencyNameId=req.params.coreCompetencyNameId
-            db.query(`SELECT userId FROM coreCompetencies_table WHERE userId=?`,userId,async(userErr,userResp)=>{
+            db.query(coreCompetenciesQueries.selectUserIdFromUser,userId,async(userErr,userResp)=>{
                 if (userErr) {
-                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg });
                     return;
                 }
                 if (userResp.length === 0) {
-                    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Client Not Found' });
+                    res.status(StatusCodes.BAD_REQUEST).json({ msg: coreCompetenciesMessages.userNotFoundMsg });
                     return;
                 }
-                db.query(`SELECT coreCompetencyNameId FROM coreCompetencies_table WHERE coreCompetencyNameId=?`,coreCompetencyNameId,async(coreErr,coreRes)=>{
+                db.query(coreCompetenciesQueries.selectCoreCompetencyNameIdFromCoreCompetenciesTable,coreCompetencyNameId,async(coreErr,coreRes)=>{
                     if (coreErr){
-                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'Internal Server Error' });
+                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: coreCompetenciesMessages.internalServerErrorMsg });
                         return;
                     }
                     if (coreRes.length===0){
-                        res.status(StatusCodes.BAD_REQUEST).json({msg:'Core Competency Name Not Found'})
+                        res.status(StatusCodes.BAD_REQUEST).json({msg:coreCompetenciesMessages.coreCompetencyNameNotFoundMsg})
                         return;
                     }
-                    const query=`DELETE FROM coreCompetencies_table WHERE userId=? AND coreCompetencyNameId=?`
+                    const query=coreCompetenciesQueries.deleteCoreCompetenciesData
                     db.query(query,[userId,coreCompetencyNameId],async(finalErr,finalRes)=>{
                         if (finalErr){
-                            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:finalErr})
+                            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg})
                             return
                         }
-                        res.status(StatusCodes.OK).json({msg:'Core Competencies Data Deleted Successfully'})
+                        res.status(StatusCodes.OK).json({msg:coreCompetenciesMessages.coreCompetenciesDataDeletedSuccessfullyMsg})
                         return 
                     })
                 })
             })
         }catch(err){
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"Internal Server Error"})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:coreCompetenciesMessages.internalServerErrorMsg})
             return
         }
     }

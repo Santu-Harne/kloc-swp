@@ -14,7 +14,6 @@ const competitionAnalysisTableCreation = (connection) => {
       weaknesses TEXT,
       opportunities TEXT,
       threats TEXT,
-      klocInput TEXT,
       userId VARCHAR(50) NOT NULL,
       FOREIGN KEY ( userId) REFERENCES user_table ( userId)
       )`

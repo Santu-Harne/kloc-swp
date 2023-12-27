@@ -1,0 +1,72 @@
+@import './CompetitiveAnalysis.scss';
+
+.core-competency-mapping-container {
+    margin: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    @include container();
+    justify-content: center;
+    align-items: center;
+    font-family: 'Roboto';
+  }
+  .core-competency-content-container{
+    background-color: $white-color;
+    border: 1px solid $input-border;
+    @include width(90vw);
+    padding: 20px;
+    border-radius: 4px;
+  }
+  .main-heading{
+    color: $font-color;
+    @include fontSize(24px);
+    text-align: center;
+  }
+  .core-competency-matter{
+    color: $font-color;
+    @include fontSize(16px);
+  }
+  .list-container{
+    @include fontSize(14px);
+    color: $font-color;
+  }
+  .side-heading{
+    color:$font-color;
+    @include fontSize(16px);
+    font-weight: 600;
+  }
+  .small-table-container{
+    overflow-x: auto;
+  }
+  .vro-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .vro-table th, .vro-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    @include fontSize(12px);
+    color:$font-color;
+  }
+  .thead{
+    color: $font-color !important;
+    font-weight: bold;
+  }
+  .core-competency-table {
+    margin-top: 20px;
+    width:90vw;
+    overflow-x: auto;
+  }
+  /* Media query for responsiveness */
+
+  .tableCell{
+    border: 1px solid $input-border !important;
+  }
+  
+  .css-11xur9t-MuiPaper-root-MuiTableContainer-root{
+    width:90vw !important;
+    margin-top: 20px;
+    box-shadow: none !important;
+  }

@@ -5,6 +5,7 @@ import userRoutes from './userRoutes'
 import competitiveAnalysisRoutes from '../routes/competitiveAnalysisRoutes'
 import Register from '../components/Register';
 import ForgotPassword from '../components/ForgotPassword';
+import coreCompetencyRoutes from '../routes/coreCompetencyRoutes'
 import ExecutiveSummaryRoutes from './executivesummery';
 import ConsumerUnderStandingRoutes from './consumerunderstanding';
 import ServiceOfferingRoutes from './serviceoffering';
@@ -17,6 +18,7 @@ const routes = (
     <Route exact path='/register' element={<Register />} />
     {userRoutes}
     {competitiveAnalysisRoutes}
+    {coreCompetencyRoutes}
     {ExecutiveSummaryRoutes}
     {ConsumerUnderStandingRoutes}
     {ServiceOfferingRoutes}

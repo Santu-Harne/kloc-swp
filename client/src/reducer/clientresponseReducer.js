@@ -3,18 +3,18 @@ import { createSelector } from 'reselect';
 import { createClientResponse,getAllClientResponses} from '../actions/clienresponseAction'
 
 const ClientResponseReducer=createSlice({
-  name:'competitiveAnalysis',
-  initialState: { status: 'idle', error: null,competitiveAnalysis:[] },
+  name:'clientresponse',
+  initialState: { status: 'idle', error: null,clientresponses:[] },
 extraReducers: (builder) => {
   builder
     .addCase(getAllClientResponses.fulfilled, (state,action)=>{
       state.status='successful'
-      state.competitiveAnalysis=action.payload
+      state.clientresponses=action.payload
     })
     .addCase(createClientResponse.fulfilled,(state,action)=>{
       state.status='successful'
       if (action.payload){
-        state.competitiveAnalysis.push(action.payload.data)
+        state.clientresponses.push(action.payload.data)
       }
     })
     

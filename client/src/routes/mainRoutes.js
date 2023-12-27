@@ -8,6 +8,8 @@ import ForgotPassword from '../components/ForgotPassword';
 import coreCompetencyRoutes from '../routes/coreCompetencyRoutes'
 import ExecutiveSummaryRoutes from './executivesummery';
 import MissionRoutes from './missionRoutes';
+import ConsumerUnderStandingRoutes from './consumerunderstanding';
+import ServiceOfferingRoutes from './serviceoffering';
 
 const routes = (
   <>
@@ -20,6 +22,8 @@ const routes = (
     {coreCompetencyRoutes}
     {ExecutiveSummaryRoutes}
     {MissionRoutes}
+    {ConsumerUnderStandingRoutes}
+    {ServiceOfferingRoutes}
     {/* <Route exact element={<ProtectedRoute />}>
     </Route> */}
   </>

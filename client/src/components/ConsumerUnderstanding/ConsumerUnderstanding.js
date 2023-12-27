@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllQuestions } from "../../actions/questionActions";
+import { getAllQuestions } from "../../actions/ExecutiveSummary";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
@@ -14,12 +14,12 @@ import { TextField } from "@mui/material";
 import { createClientResponse, getAllClientResponses } from "../../actions/clienresponseAction";
 import toast from 'react-hot-toast';
 
-function ExecutiveSummary() {
+function ConsumerUnderStanding() {
   const [selectedQuestionIds, setSelectedQuestionIds] = useState([]);
   const [clientInputValues, setClientInputValues] = useState({});
   const [klocInputValues, setKlocInputValues] = useState({});
 
-  const sectionId = "section_0001";
+  const sectionId = "section_0004";
   const userRole=(JSON.parse(localStorage.getItem('users'))).userRole
 
   const dispatch = useDispatch();
@@ -140,11 +140,11 @@ console.log(questionData)
   
   
 
-  const headers = ["Headers", "Pointers", "Input", "ExampleInput", "klocInput"];
+  const headers = ["Probes", "Input", "ExampleInput", "klocInput"];
 
   return (
     <div className="competitive-analysis-container">
-      <h1 className="heading" style={{textAlign:'center'}}>ExecutiveSummary</h1>
+      <h1 className="heading" style={{textAlign:'center'}}>Consumer UnderStanding</h1>
       <TableContainer component={Paper} className="table-container">
         <Table className="table">
           <TableHead className="tableHead">
@@ -195,16 +195,7 @@ console.log(questionData)
                     borderRight: "1px solid black",
                   }}
                 >
-                  {question.questionText.split(":")[1]}
-                </TableCell>
-                <TableCell
-                  style={{
-                    width: "40px",
-                    borderBottom: "1px solid black",
-                    borderTop: "1px solid black",
-                    borderRight: "1px solid black",
-                  }}
-                >
+                 
                   <TextField
                     value={
                       clientInputValues[questionIds[index]] !== undefined
@@ -264,4 +255,4 @@ console.log(questionData)
   );
 }
 
-export default ExecutiveSummary;
+export default ConsumerUnderStanding;

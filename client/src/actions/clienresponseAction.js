@@ -18,9 +18,9 @@ export const getAllClientResponses = createAsyncThunk(
 );
 export const createClientResponse= createAsyncThunk(
   `/api/clientresponse/create`,
-  async (updatedClientResponseData) => {
+  async (clientResponseData) => {
     try {
-      const result = await api.create(`/api/clientresponse/create/${userId}`,clientresponsedata);
+      const result = await api.create(`/api/clientresponse/create/${userId}`,clientResponseData);
       return result.data.data;
     } catch (error) {
       errorHandler(error);
